@@ -1,0 +1,106 @@
+prefix: "[&e&lOITC&f]"
+
+command:
+  nan: "&c%text% is not a number."
+  error: "&cAn error occured while processing the command. Check the console for more info."
+  invalid-args: "&cInvalid arguments. Type /oitc help for a list commands."
+  invalid-sender: "&cOnly players are allowed to use this command."
+
+  specify-display-name: "&cSpecify an display name."
+  specify-game-id: "&cSpecify a game id."
+  specify-number: "&cSpecify a number."
+
+  game:
+    create: "&eYou have created a new game by the id %id%."
+    exists: "&cA game by the id of %id% already exists."
+    lobby: "&eYou have set the waiting lobby for game %id%."
+    name: "&eYou have set the name %name% for game %id%."
+    not-exists: "&cA game by the id of %id% does not exist."
+    remove: "&eYou have removed game %id% and all its arenas."
+    sign-set: "&eYou have set the joining sign for game %id%."
+    spawn-add: "&eYou have added spawn to the game %id%."
+    player-limit: "&eYou have set the player limit for game %id%."
+
+  reload-config: "&eAll configuration files have been reloaded."
+  main-lobby-set: "&eYou have set the main lobby for OITC."
+  leaderboard-set: "&eYou have added a leaderboard sign holding rank #%rank%."
+
+game:
+  countdown:
+    cancelled: "&eThe countdown has been cancelled."
+    note: "&eGame starting in &f%seconds% &eseconds."
+    subtitle: "&eGet ready..."
+
+  full: "&cThis game has no more player spots available."
+  in-progress: "&cThis game is in progress."
+  kill: "&f%player% &ewas killed by &f%killer%"
+  killstreak: "&f%player% &eis on a &f%streak% &ekillstreak!"
+  win: "&f%player% &ewon the game!"
+  join: "&f%player% &ehas joined the game. &f[&e%players%&f/&e%max_players%&f]"
+  leave: "&f%player% &ehas left the game. &f[&e%players%&f/&e%max_players%&f]"
+  spectating: "&f%player% &eis spectating."
+  stop-spectating: "&f%player% &estopped spectating."
+
+  result:
+    winner: "&a&lWinner &7- &e%player%"
+    killstreak: "&b&lBest killstreak &7- &e%player% &7- &c%streak%"
+
+player:
+  ingame: "&cYou are already in-game."
+  not-ingame: "&cYou are not in-game."
+  leave-game: "&eYou have left your current game."
+
+menu:
+  game:
+    title: "&aGames"
+    name: "&b%game%"
+    joinable: "&a&l[ Click to join ]"
+    in-progress: "&e&l[ Click to spectate ]"
+    players: "&7Players: &e%players%&7/&e%max_players%"
+
+  hotbar:
+    title: "&bHotbar"
+    saved: "&aHotbar saved"
+    error: "&cCannot save hotbar"
+
+sign:
+  game:
+    name: "&3%game%"
+    joinable: "&2&l[ Click to join ]"
+    in-progress: "&4&l[ In Progress ]"
+    players: "&8Players: &6%players%&8/&6%max_players%"
+
+  leaderboard:
+    rank: "&9#%rank%"
+    name: "&1%name%"
+    kills: "Kills: &5%kills%"
+    wins: "Wins: &5%wins%"
+
+stats:
+  title: 'Stats of &e%player%'
+  games: 'Games: &a%games%'
+  kills: 'Kills: &a%kills%'
+  deaths: 'Deaths: &c%deaths%'
+  kdr: 'KDR: &6%kdr%'
+  wins: 'Wins: &a%wins%'
+  losses: 'Losses: &c%losses%'
+  wlr: 'WLR: &6%wlr%'
+
+scoreboard:
+  title: '&eOITC'
+
+  date-format: 'yyyy/MM/dd'
+
+  header: '&7%date%'
+  footer: '&ego-network.lol'
+
+  queue:
+    map: 'Map: &a%map%'
+    players: 'Players: &e%players%&7/&e%max_players%'
+    waiting: 'Waiting...'
+    starting: 'Starting...'
+
+  game:
+    format: '&f%player%: &a%kills%'
+    format-self: '&6%player%: &a%kills%'
+

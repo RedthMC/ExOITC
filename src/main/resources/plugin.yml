@@ -1,0 +1,8 @@
+name: ExOITC
+version: 0.1
+author: Redth
+main: me.redth.exoitc.ExOITC
+
+commands:
+  oitc:
+
