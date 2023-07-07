@@ -2,9 +2,10 @@ package me.redth.exoitc.game;
 
 import me.redth.exoitc.ExOITC;
 import me.redth.exoitc.config.Messages;
-import me.redth.exoitc.util.GameSign;
-import me.redth.exoitc.util.LeaderboardSign;
-import me.redth.exoitc.util.Sidebar;
+import me.redth.exoitc.data.PlayerStats;
+import me.redth.exoitc.util.sign.GameSign;
+import me.redth.exoitc.util.sign.LeaderboardSign;
+import me.redth.exoitc.util.visual.Sidebar;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -30,6 +31,7 @@ public class Game {
     public final List<Location> usableSpawn = new ArrayList<>();
     public final List<GamePlayer> players;
     public GamePlayer killstreaker;
+    public int killstreak;
     public GameSign lobbySign;
     public int phase = 0; // 0 queue,1 start,2 end
     private int taskId = -1;
@@ -163,7 +165,7 @@ public class Game {
         broadcast("");
         broadcast(Messages.GAME_RESULT_WINNER, winner.as().getName());
         broadcast("");
-        broadcast(Messages.GAME_RESULT_KILLSTREAK, killstreaker.as().getName(), String.valueOf(killstreaker.getKillStreak()));
+        broadcast(Messages.GAME_RESULT_KILLSTREAK, killstreaker.as().getName(), String.valueOf(killstreak));
         broadcast("");
 
         if (lobbySign != null) lobbySign.update();
@@ -171,6 +173,7 @@ public class Game {
         winner.win();
         taskId = ExOITC.scheduleDelayed(() -> {
             for (GamePlayer player : players) {
+                PlayerStats.updateStats(player);
                 player.onLobby();
             }
             title("", "");
@@ -182,6 +185,7 @@ public class Game {
 
     public void reset() {
         killstreaker = null;
+        killstreak = 0;
         usableSpawn.clear();
         usableSpawn.addAll(spawns);
         players.clear();
@@ -236,7 +240,11 @@ public class Game {
         if (killstreak >= 3) broadcast(Messages.GAME_KILLSTREAK, killer.as().getName(), String.valueOf(killstreak));
 
         if (killstreaker == null) killstreaker = killer;
-        else if (killstreaker.getKillStreak() < killstreak) killstreaker = killer;
+        else if (this.killstreak < killstreak) {
+            killstreaker = killer;
+            this.killstreak = killstreak;
+        }
+
 
         if (exceed20) {
             finish(killer);

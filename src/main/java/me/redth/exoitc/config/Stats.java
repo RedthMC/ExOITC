@@ -1,7 +1,7 @@
 package me.redth.exoitc.config;
 
 import me.redth.exoitc.data.PlayerStats;
-import me.redth.exoitc.util.LeaderboardSign;
+import me.redth.exoitc.util.sign.LeaderboardSign;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.UUID;

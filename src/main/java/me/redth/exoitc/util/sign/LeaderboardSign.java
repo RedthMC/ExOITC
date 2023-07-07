@@ -1,4 +1,4 @@
-package me.redth.exoitc.util;
+package me.redth.exoitc.util.sign;
 
 import me.redth.exoitc.ExOITC;
 import me.redth.exoitc.config.Config;
@@ -72,7 +72,7 @@ public class LeaderboardSign {
     public static void save() {
         Configuration config = ExOITC.getInstance().getConfig();
         for (Map.Entry<Integer, Location> sign : SIGNS.entrySet()) {
-            config.set(String.valueOf(sign.getKey()), sign.getValue());
+            config.set("leaderboard-signs" + sign.getKey(), sign.getValue());
         }
         Config.saveDefault();
     }

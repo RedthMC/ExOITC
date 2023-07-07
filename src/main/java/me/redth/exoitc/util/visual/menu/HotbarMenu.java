@@ -1,4 +1,4 @@
-package me.redth.exoitc.menu;
+package me.redth.exoitc.util.visual.menu;
 
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.data.PlayerHotbar;
@@ -22,7 +22,7 @@ public class HotbarMenu extends CustomMenu {
     @Override
     public void onInteract(InventoryClickEvent e) {
         if (e.getClickedInventory() != e.getInventory()) e.setCancelled(true);
-        if (e.getAction() != InventoryAction.PICKUP_ALL && e.getAction() != InventoryAction.PLACE_ALL) e.setCancelled(true);
+        if (e.getAction() != InventoryAction.PICKUP_ALL && e.getAction() != InventoryAction.PLACE_ALL && e.getAction() != InventoryAction.SWAP_WITH_CURSOR) e.setCancelled(true);
     }
 
     public void onDrag(InventoryDragEvent e) {

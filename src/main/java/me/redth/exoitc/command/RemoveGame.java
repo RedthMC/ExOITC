@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 
 public class RemoveGame extends SubCommand {
     public RemoveGame() {
-        super("removegame", "removes a game and its arenas", "oitc removegame <id>", "oitc.admin", false);
+        super("remove", "removes a game and its arenas", "oitc remove <id>", "oitc.admin", false);
     }
 
     public void execute(final CommandSender sender, final String[] args) {

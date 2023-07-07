@@ -2,7 +2,7 @@ package me.redth.exoitc.command;
 
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.game.GamePlayer;
-import me.redth.exoitc.menu.GamesMenu;
+import me.redth.exoitc.util.visual.menu.GamesMenu;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

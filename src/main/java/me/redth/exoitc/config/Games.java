@@ -1,8 +1,7 @@
 package me.redth.exoitc.config;
 
 import me.redth.exoitc.game.Game;
-import me.redth.exoitc.util.GameSign;
-import org.bukkit.Bukkit;
+import me.redth.exoitc.util.sign.GameSign;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,15 +20,13 @@ public class Games {
             try {
                 ConfigurationSection section = yaml.getConfigurationSection(key);
                 Game game = new Game(key);
-                game.name = section.getString("name", key);
-                String[] split = section.getString("icon", "WOOL:0").split(":");
-                game.icon = Material.valueOf(split[0]);
-                game.iconDamage = Short.parseShort(split[1]);
-                game.minPlayer = section.getInt("min-player", 2);
-                game.maxPlayer = section.getInt("max-player", 12);
-                game.setLobby((Location) section.get("lobby", Bukkit.getWorld("world").getSpawnLocation()));
-                game.addSpawns((List<Location>) section.getList("spawns", Collections.emptyList()));
-                GameSign.loadGameSign(game, (Location) section.get("sign"));
+                if (section.contains("name")) game.name = section.getString("name", key);
+                if (section.contains("icon")) setIcon(game, section.getString("icon", "WOOL:0"));
+                if (section.contains("min-player")) game.minPlayer = section.getInt("min-player");
+                if (section.contains("max-player")) game.maxPlayer = section.getInt("max-player");
+                if (section.contains("lobby")) game.setLobby((Location) section.get("lobby"));
+                if (section.contains("spawns")) game.addSpawns((List<Location>) section.getList("spawns", Collections.emptyList()));
+                if (section.contains("sign")) GameSign.loadGameSign(game, (Location) section.get("sign"));
                 Game.GAMES.put(key, game);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -58,5 +55,10 @@ public class Games {
         config.save();
     }
 
+    private static void setIcon(Game game, String icon) {
+        String[] split = icon.split(":");
+        game.icon = Material.valueOf(split[0]);
+        game.iconDamage = Short.parseShort(split[1]);
+    }
 
 }

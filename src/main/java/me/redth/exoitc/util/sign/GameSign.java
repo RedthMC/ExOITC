@@ -1,4 +1,4 @@
-package me.redth.exoitc.util;
+package me.redth.exoitc.util.sign;
 
 import me.redth.exoitc.config.Games;
 import me.redth.exoitc.config.Messages;

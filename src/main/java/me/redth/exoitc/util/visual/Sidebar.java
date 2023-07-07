@@ -1,4 +1,4 @@
-package me.redth.exoitc.util;
+package me.redth.exoitc.util.visual;
 
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.data.PlayerStats;

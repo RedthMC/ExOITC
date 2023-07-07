@@ -6,7 +6,7 @@ import me.redth.exoitc.ExOITC;
 import me.redth.exoitc.config.Config;
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.data.PlayerStats;
-import me.redth.exoitc.util.Sidebar;
+import me.redth.exoitc.util.visual.Sidebar;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -71,9 +71,9 @@ public class GamePlayer {
         killstreak++;
         player.setLevel(killstreak);
 
-        heal();
+        ExOITC.scheduleDelayed(this::heal, 1L);
         addArrow();
-        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1F, 10f);
+        playSound(Sound.SUCCESSFUL_HIT, 1F);
         game.onKill(killed, this, kills >= 20, killstreak);
     }
 
@@ -139,7 +139,6 @@ public class GamePlayer {
         player.setLevel(0);
         player.setExp(0);
         inGameOrQueuePlayers.remove(player.getUniqueId());
-        PlayerStats.updateStats(this);
         Sidebar.lobby(player);
         setNametag(true);
     }

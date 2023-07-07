@@ -54,6 +54,10 @@ public class IngameListener implements Listener {
         if (!(e.getEntity() instanceof Player)) return;
         Player player = (Player) e.getEntity();
         if (!inGame(player)) return;
+        if (e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK && e.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
+            e.setCancelled(true);
+            return;
+        }
         GamePlayer gamePlayer = GamePlayer.of(player);
         Game game = gamePlayer.getGame();
         if (game.phase != 1) {

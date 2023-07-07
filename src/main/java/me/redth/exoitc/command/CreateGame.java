@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 
 public class CreateGame extends SubCommand {
     public CreateGame() {
-        super("create", "creates a new game", "oitc creategame <id>", "oitc.admin", false);
+        super("create", "creates a new game", "oitc create <id>", "oitc.admin", false);
     }
 
     public void execute(CommandSender sender, String[] args) {

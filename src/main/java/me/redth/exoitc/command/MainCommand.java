@@ -22,6 +22,7 @@ public class MainCommand extends Command {
         this.commands.add(new Stats());
         this.commands.add(new RemoveGame());
         this.commands.add(new SetPlayerLimit());
+        this.commands.add(new SetIcon());
         this.commands.add(new SetLobby());
         this.commands.add(new SetMainLobby());
         this.commands.add(new Help(this.commands.toArray(new SubCommand[this.commands.size()])));

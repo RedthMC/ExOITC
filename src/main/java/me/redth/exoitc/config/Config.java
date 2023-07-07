@@ -1,7 +1,7 @@
 package me.redth.exoitc.config;
 
 import me.redth.exoitc.ExOITC;
-import me.redth.exoitc.util.LeaderboardSign;
+import me.redth.exoitc.util.sign.LeaderboardSign;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;

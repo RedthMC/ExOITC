@@ -1,8 +1,8 @@
-package me.redth.exoitc.menu;
+package me.redth.exoitc.util.visual.menu;
 
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.game.Game;
-import me.redth.exoitc.item.ItemBuilder;
+import me.redth.exoitc.util.item.ItemBuilder;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

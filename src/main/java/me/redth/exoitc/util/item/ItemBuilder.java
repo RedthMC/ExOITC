@@ -1,4 +1,4 @@
-package me.redth.exoitc.item;
+package me.redth.exoitc.util.item;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

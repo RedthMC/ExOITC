@@ -1,4 +1,4 @@
-package me.redth.exoitc.menu;
+package me.redth.exoitc.util.visual.menu;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;

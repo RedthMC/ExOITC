@@ -1,11 +1,11 @@
 package me.redth.exoitc.listener;
 
 import me.redth.exoitc.game.GameKit;
-import me.redth.exoitc.item.HeldItem;
-import me.redth.exoitc.menu.CustomMenu;
-import me.redth.exoitc.util.GameSign;
-import me.redth.exoitc.util.LeaderboardSign;
-import me.redth.exoitc.util.Sidebar;
+import me.redth.exoitc.util.item.HeldItem;
+import me.redth.exoitc.util.visual.menu.CustomMenu;
+import me.redth.exoitc.util.sign.GameSign;
+import me.redth.exoitc.util.sign.LeaderboardSign;
+import me.redth.exoitc.util.visual.Sidebar;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;

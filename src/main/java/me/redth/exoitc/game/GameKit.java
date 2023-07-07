@@ -1,9 +1,9 @@
 package me.redth.exoitc.game;
 
 import me.redth.exoitc.data.PlayerHotbar;
-import me.redth.exoitc.item.ItemBuilder;
-import me.redth.exoitc.menu.GamesMenu;
-import me.redth.exoitc.menu.HotbarMenu;
+import me.redth.exoitc.util.item.ItemBuilder;
+import me.redth.exoitc.util.visual.menu.GamesMenu;
+import me.redth.exoitc.util.visual.menu.HotbarMenu;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
