@@ -16,7 +16,7 @@ public class SetIcon extends SubCommand {
     public void execute(final CommandSender sender, final String[] args) {
         Player player = (Player) sender;
         if (args.length == 1) {
-            Messages.COMMAND_SPECIFY_ID.send(player);
+            MainCommand.specifyId(sender);
             return;
         }
 
@@ -25,11 +25,12 @@ public class SetIcon extends SubCommand {
         if (game == null) return;
         ItemStack itemStack = player.getItemInHand();
         if (itemStack == null) {
-            Messages.COMMAND_SPECIFY_NAME.send(player);
+            Messages.COMMAND_SPECIFY_ITEM.send(player);
             return;
         }
         game.icon = itemStack.getType();
         game.iconDamage = itemStack.getDurability();
+        Messages.COMMAND_SET_ICON.send(player);
         Games.save();
     }
 }

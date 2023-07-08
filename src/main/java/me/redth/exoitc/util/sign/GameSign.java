@@ -27,8 +27,8 @@ public class GameSign {
     }
 
     public static void setText(Game game, String[] lines) {
-        lines[0] = Messages.SIGN_GAME_NAME.get(game.name);
         lines[1] = (game.phase == 0 ? Messages.SIGN_GAME_JOINABLE : Messages.SIGN_GAME_IN_PROGRESS).get();
+        lines[0] = Messages.SIGN_GAME_NAME.get(game.name);
         lines[2] = Messages.SIGN_GAME_PLAYERS.get(String.valueOf(game.players.size()), String.valueOf(game.maxPlayer));
     }
 

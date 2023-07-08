@@ -7,13 +7,15 @@ command:
   invalid-sender: "&cOnly players are allowed to use this command."
 
   specify-display-name: "&cSpecify an display name."
-  specify-game-id: "&cSpecify a game id."
+  specify-game-id: "&cSpecify a game id: %ids%"
   specify-number: "&cSpecify a number."
+  specify-item: "&cHold an item."
 
   game:
     create: "&eYou have created a new game by the id %id%."
     exists: "&cA game by the id of %id% already exists."
     lobby: "&eYou have set the waiting lobby for game %id%."
+    icon: "&eYou have set the icon for game %id%."
     name: "&eYou have set the name %name% for game %id%."
     not-exists: "&cA game by the id of %id% does not exist."
     remove: "&eYou have removed game %id% and all its arenas."
@@ -33,13 +35,14 @@ game:
 
   full: "&cThis game has no more player spots available."
   in-progress: "&cThis game is in progress."
-  kill: "&f%player% &ewas killed by &f%killer%"
+  kill: "&f%player% [&c%player_kills%&f] &ewas killed by &f%killer% [&c%killer_kills%&f]"
   killstreak: "&f%player% &eis on a &f%streak% &ekillstreak!"
   win: "&f%player% &ewon the game!"
   join: "&f%player% &ehas joined the game. &f[&e%players%&f/&e%max_players%&f]"
   leave: "&f%player% &ehas left the game. &f[&e%players%&f/&e%max_players%&f]"
   spectating: "&f%player% &eis spectating."
   stop-spectating: "&f%player% &estopped spectating."
+  leave-item: "&cLeave"
 
   result:
     winner: "&a&lWinner &7- &e%player%"

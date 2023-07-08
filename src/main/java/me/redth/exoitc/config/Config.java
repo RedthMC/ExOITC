@@ -36,6 +36,7 @@ public class Config {
     public static void setLobbySpawn(Location location) {
         lobbySpawn = location;
         ExOITC.getInstance().getConfig().set("lobby-spawn", lobbySpawn);
+        Config.saveDefault();
     }
 
     public static void save() {

@@ -22,6 +22,7 @@ public class MainCommand extends Command {
         this.commands.add(new Stats());
         this.commands.add(new RemoveGame());
         this.commands.add(new SetPlayerLimit());
+        this.commands.add(new SetName());
         this.commands.add(new SetIcon());
         this.commands.add(new SetLobby());
         this.commands.add(new SetMainLobby());
@@ -56,6 +57,11 @@ public class MainCommand extends Command {
             Messages.COMMAND_ERROR.send(sender);
             e.printStackTrace();
         }
+    }
+
+    public static void specifyId(CommandSender sender) {
+        String ids = String.join(",", Game.GAMES.keySet());
+        Messages.COMMAND_SPECIFY_ID.send(sender, ids);
     }
 
     public static Game getGame(CommandSender sender, String id) {

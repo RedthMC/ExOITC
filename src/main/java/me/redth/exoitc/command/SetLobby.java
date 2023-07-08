@@ -15,7 +15,7 @@ public class SetLobby extends SubCommand {
     public void execute(final CommandSender sender, final String[] args) {
         Player player = (Player) sender;
         if (args.length == 1) {
-            Messages.COMMAND_SPECIFY_ID.send(player);
+            MainCommand.specifyId(sender);
             return;
         }
 

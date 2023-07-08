@@ -13,7 +13,7 @@ public class AddSpawn extends SubCommand {
     public void execute(final CommandSender sender, final String[] args) {
         final Player player = (Player) sender;
         if (args.length == 1) {
-            Messages.COMMAND_SPECIFY_ID.send(player);
+            MainCommand.specifyId(sender);
             return;
         }
         String id = args[1];

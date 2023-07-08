@@ -11,7 +11,7 @@ public class CreateGame extends SubCommand {
 
     public void execute(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            Messages.COMMAND_SPECIFY_ID.send(sender);
+            MainCommand.specifyId(sender);
             return;
         }
         String id = args[1];

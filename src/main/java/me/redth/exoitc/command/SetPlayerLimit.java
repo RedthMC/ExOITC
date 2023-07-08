@@ -13,7 +13,7 @@ public class SetPlayerLimit extends SubCommand {
 
     public void execute(final CommandSender sender, final String[] args) {
         if (args.length == 1) {
-            Messages.COMMAND_SPECIFY_ID.send(sender);
+            MainCommand.specifyId(sender);
             return;
         }
         if (args.length == 2) {

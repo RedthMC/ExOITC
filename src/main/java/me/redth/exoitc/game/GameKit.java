@@ -1,5 +1,6 @@
 package me.redth.exoitc.game;
 
+import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.data.PlayerHotbar;
 import me.redth.exoitc.util.item.ItemBuilder;
 import me.redth.exoitc.util.visual.menu.GamesMenu;
@@ -15,9 +16,9 @@ public class GameKit {
     public static final ItemStack BOW = new ItemBuilder(Material.BOW).setUnbreakable(true).setName("").addEnchantment(Enchantment.ARROW_DAMAGE, 255).build();
     public static final ItemStack ARROW = new ItemBuilder(Material.ARROW).setName("").build();
 
-    public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName("§cLeave").build(GamePlayer::leave);
-    public static final ItemStack GAMES = new ItemBuilder(Material.EMERALD).setName("§aGames").build(player -> new GamesMenu(player).display());
-    public static final ItemStack HOTBAR = new ItemBuilder(Material.CHEST).setName("§bHotbar").build(player -> new HotbarMenu(player).display());
+    public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName(Messages.LEAVE_ITEM.get()).build(GamePlayer::leave);
+    public static final ItemStack GAMES = new ItemBuilder(Material.EMERALD).setName(Messages.MENU_GAME_TITLE.get()).build(player -> new GamesMenu(player).display());
+    public static final ItemStack HOTBAR = new ItemBuilder(Material.CHEST).setName(Messages.MENU_HOTBAR_TITLE.get()).build(player -> new HotbarMenu(player).display());
 
 
     public static void apply(GamePlayer player) {

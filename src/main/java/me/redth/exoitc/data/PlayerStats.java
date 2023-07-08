@@ -39,12 +39,13 @@ public class PlayerStats {
         data.kills = section.getInt("kills");
         data.deaths = section.getInt("deaths");
         data.wins = section.getInt("wins");
-        data.losses = section.getInt("losses");
+        data.losses = section.getInt("losses", data.games - data.wins);
 
         MAP.put(uuid, data);
     }
 
     public static void updateStats(GamePlayer gamePlayer) {
+        if (gamePlayer.getGame().phase == 0) return;
         PlayerStats stats = get(gamePlayer.as().getUniqueId());
         stats.games++;
         stats.kills += gamePlayer.getKills();

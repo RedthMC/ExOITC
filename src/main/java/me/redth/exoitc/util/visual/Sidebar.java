@@ -47,7 +47,7 @@ public class Sidebar {
         PlayerStats stats = PlayerStats.get(player.getUniqueId());
         sidebar.addLines(
                 Messages.SCOREBOARD_HEADER.get(),
-                "",
+                "§7§m--- --------------",
                 Messages.STATS_GAMES.get(String.valueOf(stats.games)),
                 " ",
                 Messages.STATS_KILLS.get(String.valueOf(stats.kills)),
@@ -57,7 +57,7 @@ public class Sidebar {
                 Messages.STATS_WINS.get(String.valueOf(stats.wins)),
                 Messages.STATS_LOSSES.get(String.valueOf(stats.losses)),
                 Messages.STATS_WLR.get(String.format("%.2f", (float) stats.wins / (float) stats.losses)),
-                "   ",
+                "§7§m---- -------------",
                 Messages.SCOREBOARD_FOOTER.get());
         sidebar.show();
     }
@@ -68,9 +68,9 @@ public class Sidebar {
         sidebar.addLines(
                 Messages.SCOREBOARD_HEADER.get(),
                 "",
-                Messages.SCOREBOARD_QUEUE_MAP.get(game.id),
+                Messages.SCOREBOARD_QUEUE_MAP.get(game.name),
                 Messages.SCOREBOARD_QUEUE_PLAYERS.get(String.valueOf(game.players.size()), String.valueOf(game.maxPlayer)),
-                ((game.players.size() < game.minPlayer) ? Messages.SCOREBOARD_QUEUE_STARTING : Messages.SCOREBOARD_QUEUE_WAITING).get(),
+                ((game.players.size() < game.minPlayer) ? Messages.SCOREBOARD_QUEUE_WAITING : Messages.SCOREBOARD_QUEUE_STARTING).get(),
                 " ",
                 Messages.SCOREBOARD_FOOTER.get());
         sidebar.show();

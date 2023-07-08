@@ -29,7 +29,7 @@ public class Game {
     public Location queueLobby;
     public final List<Location> spawns = new ArrayList<>();
     public final List<Location> usableSpawn = new ArrayList<>();
-    public final List<GamePlayer> players;
+    public final List<GamePlayer> players = new ArrayList<>();
     public GamePlayer killstreaker;
     public int killstreak;
     public GameSign lobbySign;
@@ -40,24 +40,19 @@ public class Game {
     public Game(String id) {
         this.id = id;
         this.name = id;
-        this.players = new ArrayList<>(maxPlayer);
     }
 
     public void joinQueue(Player player) {
-        if (phase != 0) {
-            Messages.GAME_IN_PROGRESS.send(player);
-            return;
-        }
         if (GamePlayer.inGameOrQueue(player)) {
             Messages.PLAYER_ALREADY_INGAME.send(player);
             return;
         }
-        if (players.size() >= maxPlayer) {
-            Messages.GAME_FULL.send(player);
+        if (phase != 0) {
+            Messages.GAME_IN_PROGRESS.send(player);
             return;
         }
-        if (countdown < 3) {
-            Messages.GAME_IN_PROGRESS.send(player);
+        if (players.size() >= maxPlayer) {
+            Messages.GAME_FULL.send(player);
             return;
         }
 
@@ -161,19 +156,18 @@ public class Game {
         phase = 2;
 
         title(Messages.GAME_WIN.get(winner.as().getName()), "");
-        sound(Sound.ANVIL_LAND, 1f);
+        sound(Sound.LEVEL_UP, 1f);
         broadcast("");
         broadcast(Messages.GAME_RESULT_WINNER, winner.as().getName());
         broadcast("");
-        broadcast(Messages.GAME_RESULT_KILLSTREAK, killstreaker.as().getName(), String.valueOf(killstreak));
-        broadcast("");
-
-        if (lobbySign != null) lobbySign.update();
+        if (killstreaker != null) {
+            broadcast(Messages.GAME_RESULT_KILLSTREAK, killstreaker.as().getName(), String.valueOf(killstreak));
+            broadcast("");
+        }
 
         winner.win();
         taskId = ExOITC.scheduleDelayed(() -> {
             for (GamePlayer player : players) {
-                PlayerStats.updateStats(player);
                 player.onLobby();
             }
             title("", "");
@@ -191,6 +185,7 @@ public class Game {
         players.clear();
         countdown = 5;
         phase = 0;
+        if (lobbySign != null) lobbySign.update();
     }
 
     public void broadcast(String str) {
@@ -236,7 +231,7 @@ public class Game {
     }
 
     public void onKill(GamePlayer killed, GamePlayer killer, boolean exceed20, int killstreak) {
-        broadcast(Messages.GAME_KILL, killed.as().getName(), killer.as().getName());
+        broadcast(Messages.GAME_KILL, killed.as().getName(), killer.as().getName(), String.valueOf(killed.getKills()), String.valueOf(killer.getKills()));
         if (killstreak >= 3) broadcast(Messages.GAME_KILLSTREAK, killer.as().getName(), String.valueOf(killstreak));
 
         if (killstreaker == null) killstreaker = killer;

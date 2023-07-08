@@ -20,15 +20,17 @@ public enum Messages {
     COMMAND_GAME_NOT_EXISTS("command.game.not-exists", "id"),
     COMMAND_GAME_REMOVE("command.game.remove", "id"),
     COMMAND_SET_LOBBY("command.game.lobby", "id"),
-    COMMAND_SET_PLAYER_LIMIT("command.player-limit", "id"),
+    COMMAND_SET_ICON("command.game.icon", "id"),
+    COMMAND_SET_PLAYER_LIMIT("command.game.player-limit", "id"),
     COMMAND_SET_DISPLAY_NAME("command.game.name", "name", "id"),
     COMMAND_RELOAD_CONFIG("command.reload-config"),
     COMMAND_SIGN_SET("command.sign-set", "id"),
-    COMMAND_SPAWN_ADD("command.spawn-add", "id"),
+    COMMAND_SPAWN_ADD("command.game.spawn-add", "id"),
 
-    COMMAND_SPECIFY_ID("specify-game-id"),
-    COMMAND_SPECIFY_NAME("specify-display-name"),
-    COMMAND_SPECIFY_NUMBER("specify-number"),
+    COMMAND_SPECIFY_ID("command.specify-game-id", "ids"),
+    COMMAND_SPECIFY_NAME("command.specify-display-name"),
+    COMMAND_SPECIFY_NUMBER("command.specify-number"),
+    COMMAND_SPECIFY_ITEM("command.specify-item"),
 
     COMMAND_LEADERBOARD_SET("command.leaderboard-set"),
     COMMAND_MAIN_LOBBY_SET("command.main-lobby-set"),
@@ -40,7 +42,7 @@ public enum Messages {
 
     GAME_FULL("game.full"),
     GAME_IN_PROGRESS("game.in-progress"),
-    GAME_KILL("game.kill", "player", "killer"),
+    GAME_KILL("game.kill", "player", "killer", "player_kills", "killer_kills"),
     GAME_KILLSTREAK("game.killstreak", "player", "streak"),
     GAME_WIN("game.win", "player"),
     GAME_JOIN("game.join", "player", "players", "max_players"),
@@ -50,6 +52,8 @@ public enum Messages {
 
     GAME_RESULT_WINNER("game.result.winner", "player"),
     GAME_RESULT_KILLSTREAK("game.result.killstreak", "player", "streak"),
+
+    LEAVE_ITEM("game.leave-item"),
 
     PLAYER_ALREADY_INGAME("player.ingame"),
     PLAYER_NOT_PLAYING("player.not-ingame"),

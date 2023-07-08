@@ -56,7 +56,7 @@ public class LeaderboardSign {
     }
 
     public static void onSignPlaced(SignChangeEvent e) {
-        if (!"[OITC LB]".equals(e.getLine(0))) return;
+        if (!"[OITC#]".equals(e.getLine(0))) return;
 
         try {
             int i = Integer.parseInt(e.getLine(1));
@@ -72,7 +72,7 @@ public class LeaderboardSign {
     public static void save() {
         Configuration config = ExOITC.getInstance().getConfig();
         for (Map.Entry<Integer, Location> sign : SIGNS.entrySet()) {
-            config.set("leaderboard-signs" + sign.getKey(), sign.getValue());
+            config.set("leaderboard-signs." + sign.getKey(), sign.getValue());
         }
         Config.saveDefault();
     }

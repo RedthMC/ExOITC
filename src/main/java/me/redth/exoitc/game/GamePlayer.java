@@ -71,7 +71,8 @@ public class GamePlayer {
         killstreak++;
         player.setLevel(killstreak);
 
-        ExOITC.scheduleDelayed(this::heal, 1L);
+        heal();
+        ExOITC.scheduleDelayed(this::heal, 5L);
         addArrow();
         playSound(Sound.SUCCESSFUL_HIT, 1F);
         game.onKill(killed, this, kills >= 20, killstreak);
@@ -139,6 +140,7 @@ public class GamePlayer {
         player.setLevel(0);
         player.setExp(0);
         inGameOrQueuePlayers.remove(player.getUniqueId());
+        PlayerStats.updateStats(this);
         Sidebar.lobby(player);
         setNametag(true);
     }
