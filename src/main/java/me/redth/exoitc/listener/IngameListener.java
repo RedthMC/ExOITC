@@ -38,7 +38,6 @@ public class IngameListener implements Listener {
         if (inGame(e.getPlayer())) e.setCancelled(true);
     }
 
-
     @EventHandler
     public static void noUseBlock(PlayerInteractEvent e) {
         if (inGame(e.getPlayer())) e.setUseInteractedBlock(Event.Result.DENY);
@@ -54,15 +53,25 @@ public class IngameListener implements Listener {
         if (!(e.getEntity() instanceof Player)) return;
         Player player = (Player) e.getEntity();
         if (!inGame(player)) return;
-        if (e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK && e.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
-            e.setCancelled(true);
-            return;
-        }
         GamePlayer gamePlayer = GamePlayer.of(player);
         Game game = gamePlayer.getGame();
-        if (game.phase != 1) {
-            e.setCancelled(true);
-            return;
+
+        switch (e.getCause()) {
+            case ENTITY_ATTACK:
+            case PROJECTILE:
+                if (game.phase != 1) e.setCancelled(true);
+                break;
+            case VOID:
+            case SUICIDE:
+                if (game.phase == 1 && !gamePlayer.spectator) {
+                    e.setDamage(1000D);
+                } else {
+                    player.teleport(game.queueLobby);
+                    e.setCancelled(true);
+                }
+                break;
+            default:
+                e.setCancelled(true);
         }
 //        if (e.getDamage() < player.getHealth()) return;
 //        e.setCancelled(true);
@@ -98,6 +107,7 @@ public class IngameListener implements Listener {
         player.onDeath();
         e.setKeepInventory(true);
         e.setDeathMessage(null);
+        e.getEntity().getWorld().createExplosion(e.getEntity().getLocation(), 0.0f);
 
 
         Player killer = player.as().getKiller();

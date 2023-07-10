@@ -81,6 +81,7 @@ public class Sidebar {
         Sidebar sidebar = newSidebar(self.as(), "game");
         sidebar.custom("", 30);
         for (GamePlayer player : self.getGame().players) {
+            if (player.spectator) continue;
             Messages format = (player == self) ? Messages.SCOREBOARD_GAME_FORMAT_SELF : Messages.SCOREBOARD_GAME_FORMAT;
             sidebar.custom(format.get(player.as().getName(), String.valueOf(player.getKills())), player.getKills());
         }

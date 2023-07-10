@@ -2,7 +2,6 @@ package me.redth.exoitc.game;
 
 import me.redth.exoitc.ExOITC;
 import me.redth.exoitc.config.Messages;
-import me.redth.exoitc.data.PlayerStats;
 import me.redth.exoitc.util.sign.GameSign;
 import me.redth.exoitc.util.sign.LeaderboardSign;
 import me.redth.exoitc.util.visual.Sidebar;
@@ -26,6 +25,7 @@ public class Game {
     public short iconDamage = 0;
     public int minPlayer = 2;
     public int maxPlayer = 8;
+    public boolean isDuel = false;
     public Location queueLobby;
     public final List<Location> spawns = new ArrayList<>();
     public final List<Location> usableSpawn = new ArrayList<>();
@@ -48,7 +48,11 @@ public class Game {
             return;
         }
         if (phase != 0) {
-            Messages.GAME_IN_PROGRESS.send(player);
+            GamePlayer spectator = new GamePlayer(this, player);
+            spectator.onSpectate();
+            players.add(spectator);
+//            Messages.GAME_IN_PROGRESS.send(player);
+            broadcast(Messages.GAME_SPECTATING, player.getName());
             return;
         }
         if (players.size() >= maxPlayer) {
@@ -59,7 +63,7 @@ public class Game {
         GamePlayer queuePlayer = new GamePlayer(this, player);
         players.add(queuePlayer);
         queuePlayer.onQueue();
-        broadcast(Messages.GAME_JOIN, queuePlayer.as().getName(), String.valueOf(players.size()), String.valueOf(maxPlayer));
+        broadcast(Messages.GAME_JOIN, player.getName(), String.valueOf(players.size()), isDuel ? "2" : String.valueOf(maxPlayer));
         if (lobbySign != null) lobbySign.update();
 
         for (GamePlayer gamePlayer : players) {
@@ -100,8 +104,14 @@ public class Game {
 
         player.onLobby();
         Messages.PLAYER_LEAVE.send(player.as());
-        broadcast(Messages.GAME_LEAVE, player.as().getName(), String.valueOf(players.size()), String.valueOf(maxPlayer));
-        if (lobbySign != null) lobbySign.update();
+        if (player.spectator) {
+            broadcast(Messages.GAME_STOP_SPECTATING, player.as().getName());
+        } else {
+
+            if (lobbySign != null) lobbySign.update();
+            broadcast(Messages.GAME_LEAVE, player.as().getName(), String.valueOf(players.size()), String.valueOf(maxPlayer));
+        }
+
     }
 
     public void checkCancelStarting() {

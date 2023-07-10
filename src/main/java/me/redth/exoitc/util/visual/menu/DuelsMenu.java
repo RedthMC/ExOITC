@@ -1,20 +1,23 @@
 package me.redth.exoitc.util.visual.menu;
 
 import me.redth.exoitc.config.Messages;
+import me.redth.exoitc.duel.DuelRequest;
 import me.redth.exoitc.game.Game;
 import me.redth.exoitc.util.item.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-public class GamesMenu extends CustomMenu {
+public class DuelsMenu extends CustomMenu {
     public static final ItemStack BACKGROUND = new ItemBuilder(Material.STAINED_GLASS_PANE).setDamage((short) 7).setName(" ").build();
+    public static final ItemStack RANDOM = new ItemBuilder(Material.MAP).setName("§bRandom Map").build();
 
-    public GamesMenu(Player player) {
-        super(player, Messages.MENU_GAME_TITLE.get(), 6);
+    private final Player accepter;
+
+    public DuelsMenu(Player player, Player accepter) {
+        super(player, "§cDuel: §3" + accepter.getName(), 6);
+        this.accepter = accepter;
         for (int i = 0; i < 9; i++) {
             inventory.setItem(i, BACKGROUND);
         }
@@ -27,8 +30,10 @@ public class GamesMenu extends CustomMenu {
         for (int i = 45; i < 54; i++) {
             inventory.setItem(i, BACKGROUND);
         }
+        inventory.addItem(RANDOM);
         for (Game game : Game.GAMES.values()) {
-            if (game.isDuel) continue;
+            if (!game.isDuel) continue;
+            if (game.phase != 0) continue;
             inventory.addItem(getGameItem(game));
         }
     }
@@ -38,25 +43,23 @@ public class GamesMenu extends CustomMenu {
         e.setCancelled(true);
         if (e.getClickedInventory() != e.getInventory()) return;
         if (e.getCurrentItem() == null) return;
+        if (!e.getCurrentItem().hasItemMeta()) return;
+        if (!"§7§m------- ".equals(e.getCurrentItem().getItemMeta().getDisplayName())) {
+            if ("§bRandom Map".equals(e.getCurrentItem().getItemMeta().getDisplayName())) {
+                DuelRequest.request(null, player, accepter);
+            }
+            return;
+        }
         if (!e.getCurrentItem().getItemMeta().hasLore()) return;
-        String id = e.getCurrentItem().getItemMeta().getLore().get(3).split(" ")[1].replace("§", "");
+        String id = e.getCurrentItem().getItemMeta().getLore().get(1).split(" ")[1].replace("§", "");
         Game game = Game.GAMES.get(id);
-        if (game != null) game.joinQueue(player);
+        DuelRequest.request(game, player, accepter);
     }
 
     public static ItemStack getGameItem(Game game) {
         ItemBuilder itemBuilder = new ItemBuilder(game.icon).setDamage(game.iconDamage);
-        itemBuilder.setName("§7§m-------");
-        itemBuilder.setLore(
-                Messages.MENU_GAME_NAME.get(game.name),
-                Messages.MENU_GAME_PLAYERS.get(String.valueOf(game.players.size()), String.valueOf(game.maxPlayer)),
-                ((game.phase == 0) ? Messages.MENU_GAME_JOINABLE : Messages.MENU_GAME_IN_PROGRESS).get(),
-                "§7§m------- " + game.id.replaceAll("(?!$)", "§")
-        );
-        if (game.phase != 0) {
-            itemBuilder.addEnchantment(Enchantment.DURABILITY, 1);
-            itemBuilder.addFlags(ItemFlag.HIDE_ENCHANTS);
-        }
+        itemBuilder.setName("§7§m------- ");
+        itemBuilder.setLore(Messages.MENU_GAME_NAME.get(game.name), "§7§m------- " + game.id.replaceAll("(?!$)", "§"));
         return itemBuilder.build();
     }
 }

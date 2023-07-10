@@ -24,6 +24,7 @@ public class Games {
                 if (section.contains("icon")) setIcon(game, section.getString("icon", "WOOL:0"));
                 if (section.contains("min-player")) game.minPlayer = section.getInt("min-player");
                 if (section.contains("max-player")) game.maxPlayer = section.getInt("max-player");
+                if (section.contains("duel")) game.isDuel = section.getBoolean("duel");
                 if (section.contains("lobby")) game.setLobby((Location) section.get("lobby"));
                 if (section.contains("spawns")) game.addSpawns((List<Location>) section.getList("spawns", Collections.emptyList()));
                 if (section.contains("sign")) GameSign.loadGameSign(game, (Location) section.get("sign"));
@@ -47,6 +48,7 @@ public class Games {
             yaml.set(game.id + ".icon", game.icon.toString() + ":" + game.iconDamage);
             yaml.set(game.id + ".min-player", game.minPlayer);
             yaml.set(game.id + ".max-player", game.maxPlayer);
+            yaml.set(game.id + ".duel", game.isDuel);
             yaml.set(game.id + ".lobby", game.queueLobby);
             yaml.set(game.id + ".spawns", game.spawns);
             if (game.lobbySign != null) yaml.set(game.id + ".sign", game.lobbySign.sign);

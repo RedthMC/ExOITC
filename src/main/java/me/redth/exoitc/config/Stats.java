@@ -30,6 +30,7 @@ public class Stats {
 
     public static void set(PlayerStats stats) {
         YamlConfiguration yaml = config.config;
+        yaml.set(stats.uuid + ".name", stats.name);
         yaml.set(stats.uuid + ".games", stats.games);
         yaml.set(stats.uuid + ".kills", stats.kills);
         yaml.set(stats.uuid + ".deaths", stats.deaths);

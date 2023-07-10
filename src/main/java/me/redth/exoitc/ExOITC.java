@@ -1,5 +1,6 @@
 package me.redth.exoitc;
 
+import me.redth.exoitc.command.Duel;
 import me.redth.exoitc.command.MainCommand;
 import me.redth.exoitc.config.Config;
 import me.redth.exoitc.listener.IngameListener;
@@ -19,7 +20,8 @@ public class ExOITC extends JavaPlugin {
         Config.load();
         getServer().getPluginManager().registerEvents(new LobbyListener(), this);
         getServer().getPluginManager().registerEvents(new IngameListener(), this);
-        getCommand("oitc").setExecutor(new MainCommand(this));
+        new MainCommand(this);
+        new Duel();
     }
 
     public void onDisable() {

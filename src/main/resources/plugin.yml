@@ -5,4 +5,7 @@ main: me.redth.exoitc.ExOITC
 
 commands:
   oitc:
+    aliases: ['o']
+  stats:
+  duel:
 

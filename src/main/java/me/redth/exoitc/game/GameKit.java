@@ -12,12 +12,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class GameKit {
-    public static final ItemStack STONE_SWORD = new ItemBuilder(Material.STONE_SWORD).setUnbreakable(true).setName("").build();
-    public static final ItemStack BOW = new ItemBuilder(Material.BOW).setUnbreakable(true).setName("").addEnchantment(Enchantment.ARROW_DAMAGE, 255).build();
-    public static final ItemStack ARROW = new ItemBuilder(Material.ARROW).setName("").build();
+    public static final ItemStack STONE_SWORD = new ItemBuilder(Material.STONE_SWORD).setUnbreakable(true).build();
+    public static final ItemStack BOW = new ItemBuilder(Material.BOW).setUnbreakable(true).addEnchantment(Enchantment.ARROW_DAMAGE, 255).build();
+    public static final ItemStack ARROW = new ItemBuilder(Material.ARROW).build();
 
     public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName(Messages.LEAVE_ITEM.get()).build(GamePlayer::leave);
-    public static final ItemStack GAMES = new ItemBuilder(Material.EMERALD).setName(Messages.MENU_GAME_TITLE.get()).build(player -> new GamesMenu(player).display());
+    public static final ItemStack GAMES = new ItemBuilder(Material.BOW).setName(Messages.MENU_GAME_TITLE.get()).build(player -> new GamesMenu(player).display());
     public static final ItemStack HOTBAR = new ItemBuilder(Material.CHEST).setName(Messages.MENU_HOTBAR_TITLE.get()).build(player -> new HotbarMenu(player).display());
 
 

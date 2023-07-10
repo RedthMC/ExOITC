@@ -1,6 +1,5 @@
 package me.redth.exoitc.data;
 
-import com.google.common.base.Strings;
 import me.redth.exoitc.config.Stats;
 import me.redth.exoitc.game.GamePlayer;
 import org.bukkit.Bukkit;
@@ -29,12 +28,12 @@ public class PlayerStats {
 
     private PlayerStats(UUID uuid) {
         this.uuid = uuid;
-        this.name = Strings.nullToEmpty(Bukkit.getOfflinePlayer(uuid).getName());
     }
 
     public static void load(UUID uuid, ConfigurationSection section) {
         PlayerStats data = new PlayerStats(uuid);
         if (section == null) return;
+        data.name = (Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) ? Bukkit.getOfflinePlayer(uuid).getName() : section.getString("name");
         data.games = section.getInt("games");
         data.kills = section.getInt("kills");
         data.deaths = section.getInt("deaths");

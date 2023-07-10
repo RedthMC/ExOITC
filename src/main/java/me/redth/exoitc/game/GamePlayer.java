@@ -7,7 +7,9 @@ import me.redth.exoitc.config.Config;
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.data.PlayerStats;
 import me.redth.exoitc.util.visual.Sidebar;
-import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_8_R3.Packet;
+import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 public class GamePlayer {
     private static final Map<UUID, GamePlayer> inGameOrQueuePlayers = new HashMap<>();
+    private static final Map<UUID, GamePlayer> spectators = new HashMap<>();
     private final Game game;
     private final Player player;
     private final ItemStack[] prevInventory;
@@ -30,11 +33,27 @@ public class GamePlayer {
     private int killstreak;
     private int deaths;
     private boolean win;
+    public boolean spectator;
 
     public GamePlayer(Game game, Player player) {
         this.game = game;
         this.player = player;
         prevInventory = player.getInventory().getContents();
+    }
+
+    public void onSpectate() {
+        spectators.put(player.getUniqueId(), this);
+        player.teleport(game.queueLobby);
+
+        PacketPlayOutPlayerInfo oldInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_GAME_MODE, ((CraftPlayer) player).getHandle());
+        player.setGameMode(GameMode.SPECTATOR);
+        sendPacket(new PacketPlayOutGameStateChange(3, 0));
+        sendPacket(oldInfo);
+        player.setAllowFlight(true);
+        player.setFlying(true);
+
+        GameKit.queue(this);
+        spectator = true;
     }
 
     public void onQueue() {
@@ -125,6 +144,7 @@ public class GamePlayer {
 
     public static void leave(Player player) {
         GamePlayer gamePlayer = inGameOrQueuePlayers.remove(player.getUniqueId());
+        if (gamePlayer == null) gamePlayer = spectators.remove(player.getUniqueId());
         if (gamePlayer == null) {
             Messages.PLAYER_NOT_PLAYING.send(player);
             return;
@@ -137,10 +157,15 @@ public class GamePlayer {
         player.getInventory().setContents(prevInventory);
         player.updateInventory();
         player.teleport(Config.lobbySpawn);
+        player.setGameMode(GameMode.ADVENTURE);
         player.setLevel(0);
         player.setExp(0);
-        inGameOrQueuePlayers.remove(player.getUniqueId());
-        PlayerStats.updateStats(this);
+        if (spectator) {
+            spectators.remove(player.getUniqueId());
+        } else {
+            inGameOrQueuePlayers.remove(player.getUniqueId());
+            if (!game.isDuel) PlayerStats.updateStats(this);
+        }
         Sidebar.lobby(player);
         setNametag(true);
     }
