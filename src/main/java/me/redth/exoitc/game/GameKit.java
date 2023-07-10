@@ -16,7 +16,12 @@ public class GameKit {
     public static final ItemStack BOW = new ItemBuilder(Material.BOW).setUnbreakable(true).addEnchantment(Enchantment.ARROW_DAMAGE, 255).build();
     public static final ItemStack ARROW = new ItemBuilder(Material.ARROW).build();
 
-    public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName(Messages.LEAVE_ITEM.get()).build(GamePlayer::leave);
+    public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName(Messages.LEAVE_ITEM.get()).build(Participant::leave);
+    public static final ItemStack FORCE_START = new ItemBuilder(Material.DIAMOND).setName("§b強制開始").build(player -> {
+        if (Participant.isParticipating(player)) {
+            Participant.of(player).getGame().checkQueue();
+        }
+    });
     public static final ItemStack GAMES = new ItemBuilder(Material.BOW).setName(Messages.MENU_GAME_TITLE.get()).build(player -> new GamesMenu(player).display());
     public static final ItemStack HOTBAR = new ItemBuilder(Material.CHEST).setName(Messages.MENU_HOTBAR_TITLE.get()).build(player -> new HotbarMenu(player).display());
 
@@ -41,6 +46,13 @@ public class GameKit {
 
     public static void queue(GamePlayer player) {
         PlayerInventory inventory = player.as().getInventory();
+        inventory.clear();
+        inventory.setItem(7, FORCE_START);
+        inventory.setItem(8, LEAVE);
+    }
+
+    public static void spectate(Player player) {
+        PlayerInventory inventory = player.getInventory();
         inventory.clear();
         inventory.setItem(8, LEAVE);
     }

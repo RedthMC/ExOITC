@@ -13,7 +13,7 @@ public class Menu extends SubCommand {
 
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        if (GamePlayer.inGameOrQueue(player)) {
+        if (GamePlayer.isParticipating(player)) {
             Messages.PLAYER_ALREADY_INGAME.send(player);
             return;
         }

@@ -1,7 +1,6 @@
 package me.redth.exoitc.listener;
 
-import me.redth.exoitc.game.Game;
-import me.redth.exoitc.game.GamePlayer;
+import me.redth.exoitc.game.Participant;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -20,7 +19,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class IngameListener implements Listener {
     public static boolean inGame(Player player) {
-        return GamePlayer.inGameOrQueue(player);
+        return Participant.isParticipating(player);
     }
 
     @EventHandler
@@ -53,37 +52,7 @@ public class IngameListener implements Listener {
         if (!(e.getEntity() instanceof Player)) return;
         Player player = (Player) e.getEntity();
         if (!inGame(player)) return;
-        GamePlayer gamePlayer = GamePlayer.of(player);
-        Game game = gamePlayer.getGame();
-
-        switch (e.getCause()) {
-            case ENTITY_ATTACK:
-            case PROJECTILE:
-                if (game.phase != 1) e.setCancelled(true);
-                break;
-            case VOID:
-            case SUICIDE:
-                if (game.phase == 1 && !gamePlayer.spectator) {
-                    e.setDamage(1000D);
-                } else {
-                    player.teleport(game.queueLobby);
-                    e.setCancelled(true);
-                }
-                break;
-            default:
-                e.setCancelled(true);
-        }
-//        if (e.getDamage() < player.getHealth()) return;
-//        e.setCancelled(true);
-//        gamePlayer.onDeath();
-//
-//        Player killer = player.getKiller();
-//        if (killer == null) return;
-//        if (player.equals(killer)) return;
-//        if (!inGame(killer)) return;
-//
-//        GamePlayer gameKiller = GamePlayer.of(killer);
-//        gameKiller.onKill(gamePlayer);
+        Participant.of(player).onDamage(e);
     }
 
     @EventHandler
@@ -96,14 +65,14 @@ public class IngameListener implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
         if (!inGame(e.getPlayer())) return;
-        e.setRespawnLocation(GamePlayer.of(e.getPlayer()).getRespawnLocation());
+        e.setRespawnLocation(Participant.of(e.getPlayer()).getRespawnLocation());
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         if (!inGame(e.getEntity())) return;
 
-        GamePlayer player = GamePlayer.of(e.getEntity());
+        Participant player = Participant.of(e.getEntity());
         player.onDeath();
         e.setKeepInventory(true);
         e.setDeathMessage(null);
@@ -115,12 +84,12 @@ public class IngameListener implements Listener {
         if (e.getEntity().equals(killer)) return;
         if (!inGame(killer)) return;
 
-        GamePlayer gameKiller = GamePlayer.of(killer);
+        Participant gameKiller = Participant.of(killer);
         gameKiller.onKill(player);
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        GamePlayer.leave(e.getPlayer());
+        Participant.leave(e.getPlayer());
     }
 }

@@ -3,31 +3,16 @@ package me.redth.exoitc.game;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.redth.exoitc.ExOITC;
-import me.redth.exoitc.config.Config;
-import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.data.PlayerStats;
 import me.redth.exoitc.util.visual.Sidebar;
-import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.github.paperspigot.Title;
+import org.bukkit.event.entity.EntityDamageEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-public class GamePlayer {
-    private static final Map<UUID, GamePlayer> inGameOrQueuePlayers = new HashMap<>();
-    private static final Map<UUID, GamePlayer> spectators = new HashMap<>();
-    private final Game game;
-    private final Player player;
-    private final ItemStack[] prevInventory;
+public class GamePlayer extends Participant {
     private Location spawn;
     private int kills;
     private int killstreak;
@@ -36,29 +21,10 @@ public class GamePlayer {
     public boolean spectator;
 
     public GamePlayer(Game game, Player player) {
-        this.game = game;
-        this.player = player;
-        prevInventory = player.getInventory().getContents();
-    }
-
-    public void onSpectate() {
-        spectators.put(player.getUniqueId(), this);
-        player.teleport(game.queueLobby);
-
-        PacketPlayOutPlayerInfo oldInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_GAME_MODE, ((CraftPlayer) player).getHandle());
-        player.setGameMode(GameMode.SPECTATOR);
-        sendPacket(new PacketPlayOutGameStateChange(3, 0));
-        sendPacket(oldInfo);
-        player.setAllowFlight(true);
-        player.setFlying(true);
-
-        GameKit.queue(this);
-        spectator = true;
+        super(game, player);
     }
 
     public void onQueue() {
-        inGameOrQueuePlayers.put(player.getUniqueId(), this);
-        player.teleport(game.queueLobby);
         player.setGameMode(GameMode.ADVENTURE);
         GameKit.queue(this);
     }
@@ -85,7 +51,8 @@ public class GamePlayer {
         ExOITC.scheduleDelayed(() -> player.spigot().respawn(), 14L);
     }
 
-    public void onKill(GamePlayer killed) {
+    public void onKill(Participant killed) {
+        if (!(killed instanceof GamePlayer)) return;
         kills++;
         killstreak++;
         player.setLevel(killstreak);
@@ -94,15 +61,7 @@ public class GamePlayer {
         ExOITC.scheduleDelayed(this::heal, 5L);
         addArrow();
         playSound(Sound.SUCCESSFUL_HIT, 1F);
-        game.onKill(killed, this, kills >= 20, killstreak);
-    }
-
-    public boolean inGameOrQueue() {
-        return game != null;
-    }
-
-    public Game getGame() {
-        return game;
+        game.onKill((GamePlayer) killed, this, kills >= 20, killstreak);
     }
 
     public void win() {
@@ -133,41 +92,10 @@ public class GamePlayer {
         return player;
     }
 
-    public static boolean inGameOrQueue(Player player) {
-        return inGameOrQueuePlayers.containsKey(player.getUniqueId());
-    }
-
-    public static GamePlayer of(Player player) {
-        if (player == null) return null;
-        return inGameOrQueuePlayers.get(player.getUniqueId());
-    }
-
-    public static void leave(Player player) {
-        GamePlayer gamePlayer = inGameOrQueuePlayers.remove(player.getUniqueId());
-        if (gamePlayer == null) gamePlayer = spectators.remove(player.getUniqueId());
-        if (gamePlayer == null) {
-            Messages.PLAYER_NOT_PLAYING.send(player);
-            return;
-        }
-        gamePlayer.getGame().leaveGame(gamePlayer);
-    }
-
     public void onLobby() {
-        heal();
-        player.getInventory().setContents(prevInventory);
-        player.updateInventory();
-        player.teleport(Config.lobbySpawn);
-        player.setGameMode(GameMode.ADVENTURE);
-        player.setLevel(0);
-        player.setExp(0);
-        if (spectator) {
-            spectators.remove(player.getUniqueId());
-        } else {
-            inGameOrQueuePlayers.remove(player.getUniqueId());
-            if (!game.isDuel) PlayerStats.updateStats(this);
-        }
-        Sidebar.lobby(player);
+        if (!game.isDuel) PlayerStats.updateStats(this);
         setNametag(true);
+        super.onLobby();
     }
 
     public void heal() {
@@ -197,29 +125,37 @@ public class GamePlayer {
             else
                 TabAPI.getInstance().getNameTagManager().hideNameTag(tabPlayer);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
-//        Team team = player.getScoreboard().getEntryTeam(player.getName());
-//        if (team == null) team = player.getScoreboard().getTeam("HIDE");
-//        if (team == null) team = player.getScoreboard().registerNewTeam("HIDE");
-//        for (GamePlayer gamePlayer : game.players) {
-//            team.addEntry(gamePlayer.player.getName());
-//        }
-//        team.setNameTagVisibility(visible ? NameTagVisibility.ALWAYS : NameTagVisibility.NEVER);
     }
 
-    public void playSound(Sound sound, float pitch) {
-        player.playSound(player.getLocation(), sound, 1F, pitch);
+    @Override
+    public void leave() {
+        game.leaveGame(this);
     }
 
-
-    public void title(String title, String subtitle) {
-        player.sendTitle(new Title(title, subtitle));
+    public static GamePlayer of(Player player) {
+        Participant participant = Participant.of(player);
+        if (participant instanceof GamePlayer) return (GamePlayer) participant;
+        return null;
     }
 
-    public void sendPacket(Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+    @Override
+    public void onDamage(EntityDamageEvent e) {
+        switch (e.getCause()) {
+            case VOID:
+            case SUICIDE:
+                if (game.phase == 1) {
+                    e.setDamage(1000D);
+                    return;
+                }
+                player.teleport(game.queueLobby);
+                break;
+            case ENTITY_ATTACK:
+            case PROJECTILE:
+                if (game.phase == 1)
+                    return;
+        }
+        e.setCancelled(true);
     }
-
-
 }

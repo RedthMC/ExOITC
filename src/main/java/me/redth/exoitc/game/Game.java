@@ -30,6 +30,7 @@ public class Game {
     public final List<Location> spawns = new ArrayList<>();
     public final List<Location> usableSpawn = new ArrayList<>();
     public final List<GamePlayer> players = new ArrayList<>();
+    public final List<Spectator> spectators = new ArrayList<>();
     public GamePlayer killstreaker;
     public int killstreak;
     public GameSign lobbySign;
@@ -43,15 +44,13 @@ public class Game {
     }
 
     public void joinQueue(Player player) {
-        if (GamePlayer.inGameOrQueue(player)) {
+        if (GamePlayer.isParticipating(player)) {
             Messages.PLAYER_ALREADY_INGAME.send(player);
             return;
         }
         if (phase != 0) {
-            GamePlayer spectator = new GamePlayer(this, player);
-            spectator.onSpectate();
-            players.add(spectator);
-//            Messages.GAME_IN_PROGRESS.send(player);
+            Spectator spectator = new Spectator(this, player);
+            spectators.add(spectator);
             broadcast(Messages.GAME_SPECTATING, player.getName());
             return;
         }
@@ -66,17 +65,18 @@ public class Game {
         broadcast(Messages.GAME_JOIN, player.getName(), String.valueOf(players.size()), isDuel ? "2" : String.valueOf(maxPlayer));
         if (lobbySign != null) lobbySign.update();
 
-        for (GamePlayer gamePlayer : players) {
+        for (Participant gamePlayer : players) {
             gamePlayer.onQueueNewPlayer();
         }
 
+        if (players.size() < minPlayer) return;
         checkQueue();
 
     }
 
     public void checkQueue() {
+        if (phase != 0) return;
         if (taskId != -1) return;
-        if (players.size() < minPlayer) return;
 
         broadcast(Messages.GAME_COUNTDOWN_NOTE, "10");
 
@@ -93,6 +93,15 @@ public class Game {
         }, 100L, 20L);
     }
 
+
+    public void stopSpec(Spectator player) {
+        if (!spectators.remove(player)) return;
+
+        player.onLobby();
+        Messages.PLAYER_LEAVE.send(player.as());
+        broadcast(Messages.GAME_STOP_SPECTATING, player.as().getName());
+    }
+
     public void leaveGame(GamePlayer player) {
         if (!players.remove(player)) return;
 
@@ -104,13 +113,8 @@ public class Game {
 
         player.onLobby();
         Messages.PLAYER_LEAVE.send(player.as());
-        if (player.spectator) {
-            broadcast(Messages.GAME_STOP_SPECTATING, player.as().getName());
-        } else {
-
-            if (lobbySign != null) lobbySign.update();
-            broadcast(Messages.GAME_LEAVE, player.as().getName(), String.valueOf(players.size()), String.valueOf(maxPlayer));
-        }
+        if (lobbySign != null) lobbySign.update();
+        broadcast(Messages.GAME_LEAVE, player.as().getName(), String.valueOf(players.size()), String.valueOf(maxPlayer));
 
     }
 
