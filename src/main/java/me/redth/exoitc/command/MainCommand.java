@@ -23,6 +23,7 @@ public class MainCommand extends Command {
         this.commands.add(new RemoveGame());
         this.commands.add(new SetPlayerLimit());
         this.commands.add(new SetDuel());
+        this.commands.add(new Setup());
         this.commands.add(new SetName());
         this.commands.add(new SetIcon());
         this.commands.add(new SetLobby());

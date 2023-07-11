@@ -19,7 +19,12 @@ public class GameKit {
     public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName(Messages.LEAVE_ITEM.get()).build(Participant::leave);
     public static final ItemStack FORCE_START = new ItemBuilder(Material.DIAMOND).setName("§b強制開始").build(player -> {
         if (Participant.isParticipating(player)) {
-            Participant.of(player).getGame().checkQueue();
+            Game game = Participant.of(player).getGame();
+            if (game.players.size() < 2) {
+                player.sendMessage("§c不能少於2人");
+            } else {
+                Participant.of(player).getGame().checkQueue();
+            }
         }
     });
     public static final ItemStack GAMES = new ItemBuilder(Material.BOW).setName(Messages.MENU_GAME_TITLE.get()).build(player -> new GamesMenu(player).display());

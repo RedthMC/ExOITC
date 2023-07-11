@@ -84,14 +84,6 @@ public class GamePlayer extends Participant {
         return killstreak;
     }
 
-    public boolean is(Player player) {
-        return this.player.equals(player);
-    }
-
-    public Player as() {
-        return player;
-    }
-
     public void onLobby() {
         if (!game.isDuel) PlayerStats.updateStats(this);
         setNametag(true);

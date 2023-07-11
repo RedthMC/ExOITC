@@ -54,9 +54,15 @@ public class PlayerStats {
         Stats.set(stats);
     }
 
-    public static List<PlayerStats> sorted() {
+    public static List<PlayerStats> killsSorted() {
         List<PlayerStats> sorted = new ArrayList<>(MAP.values());
         sorted.sort(Comparator.comparingInt(stats -> -stats.kills));
+        return sorted;
+    }
+
+    public static List<PlayerStats> winsSorted() {
+        List<PlayerStats> sorted = new ArrayList<>(MAP.values());
+        sorted.sort(Comparator.comparingInt(stats -> -stats.wins));
         return sorted;
     }
 }

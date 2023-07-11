@@ -39,9 +39,8 @@ public class DuelsMenu extends CustomMenu {
     }
 
     @Override
-    public void onInteract(InventoryClickEvent e) {
+    public void onClick(InventoryClickEvent e) {
         e.setCancelled(true);
-        if (e.getClickedInventory() != e.getInventory()) return;
         if (e.getCurrentItem() == null) return;
         if (!e.getCurrentItem().hasItemMeta()) return;
         if (!"§7§m------- ".equals(e.getCurrentItem().getItemMeta().getDisplayName())) {

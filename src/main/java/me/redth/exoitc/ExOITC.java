@@ -5,6 +5,7 @@ import me.redth.exoitc.command.MainCommand;
 import me.redth.exoitc.config.Config;
 import me.redth.exoitc.listener.IngameListener;
 import me.redth.exoitc.listener.LobbyListener;
+import me.redth.exoitc.placeholder.Expansion;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +23,10 @@ public class ExOITC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new IngameListener(), this);
         new MainCommand(this);
         new Duel();
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new Expansion().register();
+        }
     }
 
     public void onDisable() {

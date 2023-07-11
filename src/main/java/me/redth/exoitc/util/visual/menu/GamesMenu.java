@@ -34,9 +34,8 @@ public class GamesMenu extends CustomMenu {
     }
 
     @Override
-    public void onInteract(InventoryClickEvent e) {
+    public void onClick(InventoryClickEvent e) {
         e.setCancelled(true);
-        if (e.getClickedInventory() != e.getInventory()) return;
         if (e.getCurrentItem() == null) return;
         if (!e.getCurrentItem().getItemMeta().hasLore()) return;
         String id = e.getCurrentItem().getItemMeta().getLore().get(3).split(" ")[1].replace("§", "");

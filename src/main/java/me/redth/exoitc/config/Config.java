@@ -1,7 +1,7 @@
 package me.redth.exoitc.config;
 
 import me.redth.exoitc.ExOITC;
-import me.redth.exoitc.util.sign.LeaderboardSign;
+import me.redth.exoitc.util.sign.Leaderboard;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,7 +22,7 @@ public class Config {
         Games.load();
         Stats.load();
         Hotbars.load();
-        LeaderboardSign.load(config.getConfigurationSection("leaderboard-signs"));
+        Leaderboard.load(config.getConfigurationSection("leaderboard-signs"));
 
         ExOITC.scheduleDelayedRepeating(() -> {
             Stats.save();

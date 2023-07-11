@@ -1,7 +1,7 @@
 package me.redth.exoitc.config;
 
 import me.redth.exoitc.data.PlayerStats;
-import me.redth.exoitc.util.sign.LeaderboardSign;
+import me.redth.exoitc.util.sign.Leaderboard;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class Stats {
             }
         }
 
-        LeaderboardSign.update();
+        Leaderboard.update();
     }
 
     public static void save() {

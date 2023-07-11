@@ -5,6 +5,7 @@ import me.redth.exoitc.data.PlayerHotbar;
 import me.redth.exoitc.game.GameKit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -20,13 +21,8 @@ public class HotbarMenu extends CustomMenu {
     }
 
     @Override
-    public void onInteract(InventoryClickEvent e) {
-        if (e.getClickedInventory() != e.getInventory()) e.setCancelled(true);
-        if (e.getAction() != InventoryAction.PICKUP_ALL && e.getAction() != InventoryAction.PLACE_ALL && e.getAction() != InventoryAction.SWAP_WITH_CURSOR) e.setCancelled(true);
-    }
-
-    public void onDrag(InventoryDragEvent e) {
-        e.setCancelled(true);
+    public void onClick(InventoryClickEvent e) {
+        if (e.getClick() != ClickType.LEFT) e.setCancelled(true);
     }
 
     @Override

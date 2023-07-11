@@ -16,12 +16,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LeaderboardSign {
+public class Leaderboard {
     private static final Map<Integer, Location> SIGNS = new HashMap<>();
-    private static List<PlayerStats> statsSorted = new ArrayList<>();
+    public static List<PlayerStats> killsSorted = new ArrayList<>();
+    public static List<PlayerStats> winsSorted = new ArrayList<>();
 
     public static void update() {
-        statsSorted = PlayerStats.sorted();
+        killsSorted = PlayerStats.killsSorted();
+        winsSorted = PlayerStats.winsSorted();
         for (Map.Entry<Integer, Location> sign : SIGNS.entrySet()) {
             update(sign.getKey(), sign.getValue());
         }
@@ -36,7 +38,7 @@ public class LeaderboardSign {
     }
 
     public static void setText(int rank, String[] lines) {
-        PlayerStats stats = (rank > statsSorted.size()) ? null : statsSorted.get(rank - 1);
+        PlayerStats stats = (rank > killsSorted.size()) ? null : killsSorted.get(rank - 1);
         lines[0] = Messages.SIGN_LEADERBOARD_RANK.get(String.valueOf(rank));
         lines[1] = Messages.SIGN_LEADERBOARD_NAME.get(stats == null ? "" : stats.name);
         lines[2] = Messages.SIGN_LEADERBOARD_KILLS.get(stats == null ? "" : String.valueOf(stats.kills));

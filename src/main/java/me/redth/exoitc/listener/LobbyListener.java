@@ -4,7 +4,7 @@ import me.redth.exoitc.game.GameKit;
 import me.redth.exoitc.util.item.HeldItem;
 import me.redth.exoitc.util.visual.menu.CustomMenu;
 import me.redth.exoitc.util.sign.GameSign;
-import me.redth.exoitc.util.sign.LeaderboardSign;
+import me.redth.exoitc.util.sign.Leaderboard;
 import me.redth.exoitc.util.visual.Sidebar;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
@@ -16,10 +16,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.InventoryHolder;
 
 public class LobbyListener implements Listener {
 
@@ -42,24 +41,16 @@ public class LobbyListener implements Listener {
 
     @EventHandler
     public static void onMenuClicked(InventoryClickEvent e) {
-        InventoryView view = e.getView();
-        if (view instanceof CustomMenu)
-            ((CustomMenu) view).onInteract(e);
-    }
-
-
-    @EventHandler
-    public static void onMenuDragged(InventoryDragEvent e) {
-        InventoryView view = e.getView();
-        if (view instanceof CustomMenu)
-            ((CustomMenu) view).onDrag(e);
+        InventoryHolder holder = e.getClickedInventory().getHolder();
+        if (holder instanceof CustomMenu)
+            ((CustomMenu) holder).onClick(e);
     }
 
     @EventHandler
     public static void onMenuClose(InventoryCloseEvent e) {
-        InventoryView view = e.getView();
-        if (view instanceof CustomMenu)
-            ((CustomMenu) view).onClose(e);
+        InventoryHolder holder = e.getInventory().getHolder();
+        if (holder instanceof CustomMenu)
+            ((CustomMenu) holder).onClose(e);
     }
 
     @EventHandler
@@ -75,7 +66,7 @@ public class LobbyListener implements Listener {
     @EventHandler
     public void signPlaced(SignChangeEvent e) {
         GameSign.onSignPlaced(e);
-        LeaderboardSign.onSignPlaced(e);
+        Leaderboard.onSignPlaced(e);
     }
 
 

@@ -3,7 +3,7 @@ package me.redth.exoitc.game;
 import me.redth.exoitc.ExOITC;
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.util.sign.GameSign;
-import me.redth.exoitc.util.sign.LeaderboardSign;
+import me.redth.exoitc.util.sign.Leaderboard;
 import me.redth.exoitc.util.visual.Sidebar;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ public class Game {
     public int maxPlayer = 8;
     public boolean isDuel = false;
     public Location queueLobby;
-    public final List<Location> spawns = new ArrayList<>();
+    public List<Location> spawns = new ArrayList<>();
     public final List<Location> usableSpawn = new ArrayList<>();
     public final List<GamePlayer> players = new ArrayList<>();
     public final List<Spectator> spectators = new ArrayList<>();
@@ -185,7 +185,7 @@ public class Game {
                 player.onLobby();
             }
             title("", "");
-            LeaderboardSign.update();
+            Leaderboard.update();
             reset();
             taskId = ExOITC.cancelTask(taskId);
         }, 100L);
