@@ -2,9 +2,11 @@ package me.redth.exoitc.game;
 
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.data.PlayerHotbar;
+import me.redth.exoitc.game.audience.Audience;
+import me.redth.exoitc.game.audience.GamePlayer;
 import me.redth.exoitc.util.item.ItemBuilder;
-import me.redth.exoitc.util.visual.menu.GamesMenu;
-import me.redth.exoitc.util.visual.menu.HotbarMenu;
+import me.redth.exoitc.util.menu.GamesMenu;
+import me.redth.exoitc.util.menu.HotbarMenu;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -16,14 +18,14 @@ public class GameKit {
     public static final ItemStack BOW = new ItemBuilder(Material.BOW).setUnbreakable(true).addEnchantment(Enchantment.ARROW_DAMAGE, 255).build();
     public static final ItemStack ARROW = new ItemBuilder(Material.ARROW).build();
 
-    public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName(Messages.LEAVE_ITEM.get()).build(Participant::leave);
+    public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName(Messages.LEAVE_ITEM.get()).build(Game::leave);
     public static final ItemStack FORCE_START = new ItemBuilder(Material.DIAMOND).setName("§b強制開始").build(player -> {
-        if (Participant.isParticipating(player)) {
-            Game game = Participant.of(player).getGame();
-            if (game.players.size() < 2) {
+        if (Audience.isWatching(player)) {
+            Game game = Audience.of(player).getGame();
+            if (game.audiences.size() < 2) {
                 player.sendMessage("§c不能少於2人");
             } else {
-                Participant.of(player).getGame().checkQueue();
+                Audience.of(player).getGame().countdown();
             }
         }
     });
@@ -49,8 +51,8 @@ public class GameKit {
             inventory.addItem(ARROW);
     }
 
-    public static void queue(GamePlayer player) {
-        PlayerInventory inventory = player.as().getInventory();
+    public static void queue(Player player) {
+        PlayerInventory inventory = player.getInventory();
         inventory.clear();
         inventory.setItem(7, FORCE_START);
         inventory.setItem(8, LEAVE);
@@ -64,7 +66,8 @@ public class GameKit {
 
     public static void lobby(Player player) {
         PlayerInventory inventory = player.getInventory();
-        inventory.setItem(2, GAMES);
-        inventory.setItem(3, HOTBAR);
+        inventory.clear();
+        inventory.setItem(0, GAMES);
+        inventory.setItem(1, HOTBAR);
     }
 }

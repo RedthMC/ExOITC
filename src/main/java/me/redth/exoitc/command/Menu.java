@@ -1,8 +1,8 @@
 package me.redth.exoitc.command;
 
 import me.redth.exoitc.config.Messages;
-import me.redth.exoitc.game.GamePlayer;
-import me.redth.exoitc.util.visual.menu.GamesMenu;
+import me.redth.exoitc.game.audience.Audience;
+import me.redth.exoitc.util.menu.GamesMenu;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,7 +13,7 @@ public class Menu extends SubCommand {
 
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        if (GamePlayer.isParticipating(player)) {
+        if (Audience.isWatching(player)) {
             Messages.PLAYER_ALREADY_INGAME.send(player);
             return;
         }

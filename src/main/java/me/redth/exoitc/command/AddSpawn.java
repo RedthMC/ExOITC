@@ -18,7 +18,7 @@ public class AddSpawn extends SubCommand {
         }
         String id = args[1];
         Game game = MainCommand.getGame(sender, id);
-        game.addSpawn(player.getLocation());
+        game.spawns.add(player.getLocation());
         Messages.COMMAND_SPAWN_ADD.send(player, id);
     }
 }

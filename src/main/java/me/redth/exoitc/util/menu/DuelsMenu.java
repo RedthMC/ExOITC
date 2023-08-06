@@ -1,8 +1,9 @@
-package me.redth.exoitc.util.visual.menu;
+package me.redth.exoitc.util.menu;
 
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.duel.DuelRequest;
 import me.redth.exoitc.game.Game;
+import me.redth.exoitc.game.GamePhase;
 import me.redth.exoitc.util.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class DuelsMenu extends CustomMenu {
         inventory.addItem(RANDOM);
         for (Game game : Game.GAMES.values()) {
             if (!game.isDuel) continue;
-            if (game.phase != 0) continue;
+            if (game.phase != GamePhase.QUEUE) continue;
             inventory.addItem(getGameItem(game));
         }
     }
@@ -41,6 +42,7 @@ public class DuelsMenu extends CustomMenu {
     @Override
     public void onClick(InventoryClickEvent e) {
         e.setCancelled(true);
+        if (!inventory.equals(e.getClickedInventory())) return;
         if (e.getCurrentItem() == null) return;
         if (!e.getCurrentItem().hasItemMeta()) return;
         if (!"§7§m------- ".equals(e.getCurrentItem().getItemMeta().getDisplayName())) {

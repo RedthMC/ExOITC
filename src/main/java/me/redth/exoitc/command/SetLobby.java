@@ -22,7 +22,7 @@ public class SetLobby extends SubCommand {
         String id = args[1];
         Game game = MainCommand.getGame(player, id);
         if (game == null) return;
-        game.setLobby(player.getLocation());
+        game.lobby = player.getLocation();
         Messages.COMMAND_SET_LOBBY.send(player, id);
         Games.save();
     }

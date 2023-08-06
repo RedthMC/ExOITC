@@ -55,10 +55,10 @@ public class DuelRequest {
     public void accept() {
         List<Game> duelMaps = Game.GAMES.values().stream().filter(game -> game.isDuel).collect(Collectors.toList());
         Game finalMap = map == null ? duelMaps.get(new Random().nextInt(duelMaps.size())) : map;
-        if (!finalMap.players.isEmpty()) return;
+        if (!finalMap.audiences.isEmpty()) return;
         requests.remove(challenger.getUniqueId());
-        finalMap.joinQueue(challenger);
-        finalMap.joinQueue(accepter);
+        finalMap.join(challenger);
+        finalMap.join(accepter);
         cancel();
     }
 

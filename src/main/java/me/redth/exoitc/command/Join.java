@@ -13,6 +13,6 @@ public class Join extends SubCommand {
         Player player = (Player) sender;
         Game game = MainCommand.getGame(sender, args[1]);
         if (game == null) return;
-        game.joinQueue(player);
+        game.join(player);
     }
 }

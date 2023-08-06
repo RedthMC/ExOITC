@@ -4,7 +4,7 @@ import me.redth.exoitc.ExOITC;
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.duel.DuelRequest;
 import me.redth.exoitc.game.Game;
-import me.redth.exoitc.util.visual.menu.DuelsMenu;
+import me.redth.exoitc.util.menu.DuelsMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

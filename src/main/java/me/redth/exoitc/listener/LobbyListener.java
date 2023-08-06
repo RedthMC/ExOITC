@@ -1,13 +1,15 @@
 package me.redth.exoitc.listener;
 
+import me.redth.exoitc.config.Config;
 import me.redth.exoitc.game.GameKit;
 import me.redth.exoitc.util.item.HeldItem;
-import me.redth.exoitc.util.visual.menu.CustomMenu;
-import me.redth.exoitc.util.sign.GameSign;
+import me.redth.exoitc.util.menu.ClickableMenu;
+import me.redth.exoitc.util.menu.ClosableMenu;
+import me.redth.exoitc.util.menu.DraggableMenu;
 import me.redth.exoitc.util.sign.Leaderboard;
 import me.redth.exoitc.util.visual.Sidebar;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Sign;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -16,11 +18,18 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.InventoryView;
 
 public class LobbyListener implements Listener {
+
+    @EventHandler
+    public static void onWeather(WeatherChangeEvent e) {
+        e.setCancelled(e.toWeatherState());
+    }
 
     @EventHandler
     public static void onItemClicked(PlayerInteractEvent e) {
@@ -34,38 +43,48 @@ public class LobbyListener implements Listener {
                 return;
             }
         }
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (!(e.getClickedBlock().getState() instanceof Sign)) return;
-        GameSign.onSignClicked(e.getPlayer(), (Sign) e.getClickedBlock().getState());
+        if (e.getAction() == Action.PHYSICAL && e.getClickedBlock().getType() == Material.GOLD_PLATE) {
+            e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(2));
+        }
     }
 
     @EventHandler
     public static void onMenuClicked(InventoryClickEvent e) {
-        InventoryHolder holder = e.getClickedInventory().getHolder();
-        if (holder instanceof CustomMenu)
-            ((CustomMenu) holder).onClick(e);
+        InventoryView holder = e.getView();
+        if (holder instanceof ClickableMenu)
+            ((ClickableMenu) holder).onClick(e);
     }
 
     @EventHandler
-    public static void onMenuClose(InventoryCloseEvent e) {
-        InventoryHolder holder = e.getInventory().getHolder();
-        if (holder instanceof CustomMenu)
-            ((CustomMenu) holder).onClose(e);
+    public static void onMenuDragged(InventoryDragEvent e) {
+        InventoryView holder = e.getView();
+        if (holder instanceof DraggableMenu)
+            ((DraggableMenu) holder).onDrag(e);
+    }
+
+    @EventHandler
+    public static void onMenuClosed(InventoryCloseEvent e) {
+        InventoryView holder = e.getView();
+        if (holder instanceof ClosableMenu)
+            ((ClosableMenu) holder).onClose(e);
     }
 
     @EventHandler
     public void playerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.setSaturation(20);
+        player.setExp(0);
+        player.setLevel(0);
+        player.teleport(Config.getLobby());
         Sidebar.lobby(player);
         GameKit.lobby(player);
-//        player.getInventory().setItem(1, null);
-
     }
 
     @EventHandler
     public void signPlaced(SignChangeEvent e) {
-        GameSign.onSignPlaced(e);
         Leaderboard.onSignPlaced(e);
     }
 

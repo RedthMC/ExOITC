@@ -1,6 +1,14 @@
 package me.redth.exoitc.listener;
 
-import me.redth.exoitc.game.Participant;
+import me.redth.exoitc.config.Config;
+import me.redth.exoitc.game.audience.Audience;
+import me.redth.exoitc.game.audience.DamageCallback;
+import me.redth.exoitc.game.audience.GamePlayer;
+import me.redth.exoitc.game.Game;
+import me.redth.exoitc.game.editor.EditorMenu;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -17,42 +25,53 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-public class IngameListener implements Listener {
+public class IngameListener implements Listener, DamageCallback {
     public static boolean inGame(Player player) {
-        return Participant.isParticipating(player);
+        return GamePlayer.of(player) != null;
+    }
+
+    public static boolean shouldRestrict(Player player) {
+        return player.getGameMode() != GameMode.CREATIVE || Audience.isWatching(player);
+    }
+
+    public DamageCallback gamePlayerElseAudience(Player player) {
+        DamageCallback callback = GamePlayer.of(player);
+        if (callback == null) callback = Audience.of(player);
+        if (callback == null) callback = this;
+        return callback;
     }
 
     @EventHandler
     public void noDrop(PlayerDropItemEvent e) {
-        if (inGame(e.getPlayer())) e.setCancelled(true);
+        if (shouldRestrict(e.getPlayer())) e.setCancelled(true);
     }
 
     @EventHandler
     public void noPickup(PlayerPickupItemEvent e) {
-        if (inGame(e.getPlayer())) e.setCancelled(true);
+        if (shouldRestrict(e.getPlayer())) e.setCancelled(true);
     }
 
     @EventHandler
     public void noBlockBreak(BlockBreakEvent e) {
-        if (inGame(e.getPlayer())) e.setCancelled(true);
+        if (shouldRestrict(e.getPlayer())) e.setCancelled(true);
     }
 
     @EventHandler
-    public static void noUseBlock(PlayerInteractEvent e) {
-        if (inGame(e.getPlayer())) e.setUseInteractedBlock(Event.Result.DENY);
+    public void noUseBlock(PlayerInteractEvent e) {
+        if (shouldRestrict(e.getPlayer())) e.setUseInteractedBlock(Event.Result.DENY);
     }
 
     @EventHandler
     public void noHunger(FoodLevelChangeEvent e) {
-        if (inGame(((Player) e.getEntity()))) e.setFoodLevel(20);
+        if (shouldRestrict(((Player) e.getEntity()))) e.setFoodLevel(20);
     }
 
     @EventHandler
-    public void onDamage(EntityDamageEvent e) {
+    public void onDamageHandle(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player)) return;
         Player player = (Player) e.getEntity();
-        if (!inGame(player)) return;
-        Participant.of(player).onDamage(e);
+        DamageCallback callback = gamePlayerElseAudience(player);
+        callback.onDamage(e);
     }
 
     @EventHandler
@@ -64,32 +83,51 @@ public class IngameListener implements Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
-        if (!inGame(e.getPlayer())) return;
-        e.setRespawnLocation(Participant.of(e.getPlayer()).getRespawnLocation());
+        ((CraftPlayer) e.getPlayer()).getHandle().o(0); // clear arrow
+        DamageCallback callback = gamePlayerElseAudience(e.getPlayer());
+        e.setRespawnLocation(callback.getRespawnLocation());
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
-        if (!inGame(e.getEntity())) return;
 
-        Participant player = Participant.of(e.getEntity());
+        GamePlayer player = GamePlayer.of(e.getEntity());
+        if (player == null) return;
+
         player.onDeath();
         e.setKeepInventory(true);
         e.setDeathMessage(null);
+        e.setNewExp(0);
+        e.setNewLevel(0);
         e.getEntity().getWorld().createExplosion(e.getEntity().getLocation(), 0.0f);
-
 
         Player killer = player.as().getKiller();
         if (killer == null) return;
         if (e.getEntity().equals(killer)) return;
-        if (!inGame(killer)) return;
 
-        Participant gameKiller = Participant.of(killer);
+        GamePlayer gameKiller = GamePlayer.of(killer);
+        if (gameKiller == null) return;
+
         gameKiller.onKill(player);
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        Participant.leave(e.getPlayer());
+        Game.leave(e.getPlayer());
+        EditorMenu menu = EditorMenu.editors.get(e.getPlayer().getUniqueId());
+        if (menu != null) menu.save();
+    }
+
+    @Override
+    public void onDamage(EntityDamageEvent e) {
+        if (e.getCause() == EntityDamageEvent.DamageCause.VOID || e.getCause() == EntityDamageEvent.DamageCause.SUICIDE) {
+            e.getEntity().teleport(Config.getLobby());
+        }
+        e.setCancelled(true);
+    }
+
+    @Override
+    public Location getRespawnLocation() {
+        return Config.getLobby();
     }
 }

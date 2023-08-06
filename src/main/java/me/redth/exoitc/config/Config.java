@@ -48,6 +48,12 @@ public class Config {
         ExOITC.getInstance().saveConfig();
     }
 
+    public static Location getLobby() {
+        if (lobbySpawn == null)
+            return Bukkit.getWorlds().get(0).getSpawnLocation();
+        return lobbySpawn;
+    }
+
 //    public static void loadItem(ConfigurationSection section) {
 //        ItemBuilder.fromSection(section).buildHeldItem("menu_item").setOnLeftClick(player -> LobbyMenu.MAIN_MENU.display(player));
 //    }

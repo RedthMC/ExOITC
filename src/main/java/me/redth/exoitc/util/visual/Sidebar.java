@@ -3,7 +3,6 @@ package me.redth.exoitc.util.visual;
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.data.PlayerStats;
 import me.redth.exoitc.game.Game;
-import me.redth.exoitc.game.GamePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -62,31 +61,16 @@ public class Sidebar {
         sidebar.show();
     }
 
-    public static void queue(GamePlayer player) {
-        Sidebar sidebar = newSidebar(player.as(), "queue");
-        Game game = player.getGame();
+    public static void queue(Game game, Player player) {
+        Sidebar sidebar = newSidebar(player, "queue");
         sidebar.addLines(
                 Messages.SCOREBOARD_HEADER.get(),
                 "",
                 Messages.SCOREBOARD_QUEUE_MAP.get(game.name),
-                Messages.SCOREBOARD_QUEUE_PLAYERS.get(String.valueOf(game.players.size()), String.valueOf(game.maxPlayer)),
-                ((game.players.size() < game.minPlayer) ? Messages.SCOREBOARD_QUEUE_WAITING : Messages.SCOREBOARD_QUEUE_STARTING).get(),
+                Messages.SCOREBOARD_QUEUE_PLAYERS.get(String.valueOf(game.audiences.size()), String.valueOf(game.maxPlayers)),
+                ((game.audiences.size() < game.minPlayers) ? Messages.SCOREBOARD_QUEUE_WAITING : Messages.SCOREBOARD_QUEUE_STARTING).get(),
                 " ",
                 Messages.SCOREBOARD_FOOTER.get());
-        sidebar.show();
-
-    }
-
-    public static void game(GamePlayer self) {
-        Sidebar sidebar = newSidebar(self.as(), "game");
-        sidebar.custom("", 30);
-        for (GamePlayer player : self.getGame().players) {
-            if (player.spectator) continue;
-            Messages format = (player == self) ? Messages.SCOREBOARD_GAME_FORMAT_SELF : Messages.SCOREBOARD_GAME_FORMAT;
-            sidebar.custom(format.get(player.as().getName(), String.valueOf(player.getKills())), player.getKills());
-        }
-        sidebar.custom(" ", -1);
-        sidebar.custom(Messages.SCOREBOARD_FOOTER.get(), -2);
         sidebar.show();
 
     }

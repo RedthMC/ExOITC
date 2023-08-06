@@ -25,7 +25,7 @@ public class SetPlayerLimit extends SubCommand {
         if (game == null) return;
 
         try {
-            game.maxPlayer = Integer.parseInt(args[2]);
+            game.maxPlayers = Integer.parseInt(args[2]);
         } catch (Exception e) {
             Messages.COMMAND_NAN.send(sender, args[2]);
             return;
@@ -33,7 +33,7 @@ public class SetPlayerLimit extends SubCommand {
 
         if (args.length > 3) {
             try {
-                game.minPlayer = Integer.parseInt(args[3]);
+                game.minPlayers = Integer.parseInt(args[3]);
             } catch (Exception e) {
                 Messages.COMMAND_NAN.send(sender, args[3]);
                 return;

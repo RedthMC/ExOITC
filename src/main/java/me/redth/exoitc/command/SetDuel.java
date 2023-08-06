@@ -1,9 +1,7 @@
 package me.redth.exoitc.command;
 
 import me.redth.exoitc.config.Games;
-import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.game.Game;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class SetDuel extends SubCommand {
