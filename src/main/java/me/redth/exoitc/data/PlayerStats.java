@@ -45,7 +45,7 @@ public class PlayerStats {
 
     public static void updateStats(GamePlayer gamePlayer) {
         PlayerStats stats = get(gamePlayer.as().getUniqueId());
-        stats.name = gamePlayer.as().getName();
+        stats.name = gamePlayer.getFormattedName();
         stats.games++;
         stats.kills += gamePlayer.getKills();
         stats.deaths += gamePlayer.getDeaths();

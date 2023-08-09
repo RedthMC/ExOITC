@@ -23,7 +23,7 @@ public class Stats extends SubCommand {
         }
         PlayerStats stats = PlayerStats.get(player.getUniqueId());
 
-        Messages.STATS_TITLE.send(sender, player.getName());
+        Messages.STATS_TITLE.send(sender, Messages.getPlayerNameFormat(player));
         Messages.STATS_GAMES.send(sender, String.valueOf(stats.games));
 
         Messages.STATS_KILLS.send(sender, String.valueOf(stats.kills));

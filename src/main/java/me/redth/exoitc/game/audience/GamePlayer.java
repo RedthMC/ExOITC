@@ -3,6 +3,7 @@ package me.redth.exoitc.game.audience;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.redth.exoitc.ExOITC;
+import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.game.GameKit;
 import me.redth.exoitc.game.mode.GameProcess;
 import org.bukkit.Location;
@@ -155,5 +156,9 @@ public class GamePlayer implements DamageCallback {
 
     public void spectate() {
         player.spectate();
+    }
+
+    public String getFormattedName() {
+        return player.getFormattedName();
     }
 }

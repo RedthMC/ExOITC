@@ -1,6 +1,7 @@
 package me.redth.exoitc.game.audience;
 
 import me.redth.exoitc.config.Config;
+import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.game.GameKit;
 import me.redth.exoitc.game.Game;
 import me.redth.exoitc.util.visual.Sidebar;
@@ -120,5 +121,9 @@ public class Audience implements DamageCallback {
 
     public Location getRespawnLocation() {
         return game.lobby;
+    }
+
+    public String getFormattedName() {
+        return Messages.getPlayerNameFormat(player);
     }
 }

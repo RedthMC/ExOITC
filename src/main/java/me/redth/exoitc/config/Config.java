@@ -22,7 +22,6 @@ public class Config {
         Games.load();
         Stats.load();
         Hotbars.load();
-        Leaderboard.load(config.getConfigurationSection("leaderboard-signs"));
 
         ExOITC.scheduleDelayedRepeating(() -> {
             Stats.save();

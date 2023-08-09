@@ -58,7 +58,7 @@ public class Game implements Runnable {
             Audience audience = new Audience(this, player);
             audiences.add(audience);
             audience.spectate();
-            broadcast(Messages.GAME_SPECTATING, audience.as().getName());
+            broadcast(Messages.GAME_SPECTATING, audience.getFormattedName());
 //            Messages.GAME_IN_PROGRESS.send(player);
             return;
         }
@@ -70,7 +70,7 @@ public class Game implements Runnable {
         audiences.add(audience);
         audience.queue();
 
-        informQueue(Messages.GAME_JOIN, player.getName(), String.valueOf(audiences.size()), isDuel ? "2" : String.valueOf(maxPlayers));
+        informQueue(Messages.GAME_JOIN, audience.getFormattedName(), String.valueOf(audiences.size()), isDuel ? "2" : String.valueOf(maxPlayers));
 
         if (audiences.size() < minPlayers) return;
 
@@ -119,7 +119,7 @@ public class Game implements Runnable {
 
         if (phase == GamePhase.QUEUE) {
             checkCancelStarting();
-            informQueue(Messages.GAME_LEAVE, player.as().getName(), String.valueOf(audiences.size()), String.valueOf(maxPlayers));
+            informQueue(Messages.GAME_LEAVE, player.getFormattedName(), String.valueOf(audiences.size()), String.valueOf(maxPlayers));
         }
 
         player.lobby();
@@ -149,7 +149,7 @@ public class Game implements Runnable {
 
 
     public void informQueue(Messages message, String... args) {
-        String str = message.get(args);
+        String str = Messages.PREFIX.get() + message.get(args);
         for (Audience audience : audiences) {
             audience.sendMessage(str);
             Sidebar.queue(this, audience.as());
@@ -157,7 +157,7 @@ public class Game implements Runnable {
     }
 
     public void broadcast(Messages message, String... args) {
-        String str = message.get(args);
+        String str = Messages.PREFIX.get() + message.get(args);
         for (Audience audience : audiences) {
             audience.sendMessage(str);
         }

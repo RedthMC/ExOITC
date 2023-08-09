@@ -6,16 +6,13 @@ import me.redth.exoitc.util.item.HeldItem;
 import me.redth.exoitc.util.menu.ClickableMenu;
 import me.redth.exoitc.util.menu.ClosableMenu;
 import me.redth.exoitc.util.menu.DraggableMenu;
-import me.redth.exoitc.util.sign.Leaderboard;
 import me.redth.exoitc.util.visual.Sidebar;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -24,7 +21,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.InventoryView;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class LobbyListener implements Listener {
+    public static final Map<UUID, Long> BOOSTED = new HashMap<>();
 
     @EventHandler
     public static void onWeather(WeatherChangeEvent e) {
@@ -43,8 +45,15 @@ public class LobbyListener implements Listener {
                 return;
             }
         }
-        if (e.getAction() == Action.PHYSICAL && e.getClickedBlock().getType() == Material.GOLD_PLATE) {
-            e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(2));
+        if (e.getAction() == Action.PHYSICAL) {
+            switch (e.getClickedBlock().getType()) {
+                case GOLD_PLATE:
+                    e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(2));
+                    break;
+                case IRON_PLATE:
+                    e.getPlayer().setVelocity(e.getPlayer().getEyeLocation().getDirection().setY(1.1));
+                    break;
+            }
         }
     }
 
@@ -78,15 +87,10 @@ public class LobbyListener implements Listener {
         player.setSaturation(20);
         player.setExp(0);
         player.setLevel(0);
+        player.spigot().setCollidesWithEntities(false);
         player.teleport(Config.getLobby());
         Sidebar.lobby(player);
         GameKit.lobby(player);
     }
-
-    @EventHandler
-    public void signPlaced(SignChangeEvent e) {
-        Leaderboard.onSignPlaced(e);
-    }
-
 
 }

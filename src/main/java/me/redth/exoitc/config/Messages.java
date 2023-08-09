@@ -1,7 +1,10 @@
 package me.redth.exoitc.config;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,7 +27,6 @@ public enum Messages {
     COMMAND_SET_PLAYER_LIMIT("command.game.player-limit", "id"),
     COMMAND_SET_DISPLAY_NAME("command.game.name", "name", "id"),
     COMMAND_RELOAD_CONFIG("command.reload-config"),
-    COMMAND_SIGN_SET("command.sign-set", "id"),
     COMMAND_SPAWN_ADD("command.game.spawn-add", "id"),
 
     COMMAND_SPECIFY_ID("command.specify-game-id", "ids"),
@@ -32,9 +34,7 @@ public enum Messages {
     COMMAND_SPECIFY_NUMBER("command.specify-number"),
     COMMAND_SPECIFY_ITEM("command.specify-item"),
 
-    COMMAND_LEADERBOARD_SET("command.leaderboard-set"),
     COMMAND_MAIN_LOBBY_SET("command.main-lobby-set"),
-
 
     GAME_COUNTDOWN_CANCELLED("game.countdown.cancelled"),
     GAME_COUNTDOWN_NOTE("game.countdown.note", "seconds"),
@@ -69,16 +69,6 @@ public enum Messages {
     MENU_HOTBAR_SAVED("menu.hotbar.saved"),
     MENU_HOTBAR_ERROR("menu.hotbar.error"),
 
-    SIGN_GAME_NAME("sign.game.name", "game"),
-    SIGN_GAME_JOINABLE("sign.game.joinable"),
-    SIGN_GAME_IN_PROGRESS("sign.game.in-progress"),
-    SIGN_GAME_PLAYERS("sign.game.players", "players", "max_players"),
-
-    SIGN_LEADERBOARD_RANK("sign.leaderboard.rank", "rank"),
-    SIGN_LEADERBOARD_NAME("sign.leaderboard.name", "name"),
-    SIGN_LEADERBOARD_KILLS("sign.leaderboard.kills", "kills"),
-    SIGN_LEADERBOARD_WINS("sign.leaderboard.wins", "wins"),
-
     STATS_TITLE("stats.title", "player"),
     STATS_GAMES("stats.games", "games"),
     STATS_KILLS("stats.kills", "kills"),
@@ -95,7 +85,7 @@ public enum Messages {
             return new SimpleDateFormat(config.config.getString(path, path)).format(new Date());
         }
     },
-    SCOREBOARD_HEADER("scoreboard.header", "date") {
+    SCOREBOARD_HEADER("scoreboard.header") {
         @Override
         public String get() {
             return super.get().replace("%date%", SCOREBOARD_DATE_FORMAT.get());
@@ -109,7 +99,9 @@ public enum Messages {
     SCOREBOARD_QUEUE_STARTING("scoreboard.queue.starting"),
 
     SCOREBOARD_GAME_FORMAT("scoreboard.game.format", "player", "kills"),
-    SCOREBOARD_GAME_FORMAT_SELF("scoreboard.game.format-self", "player", "kills");
+    SCOREBOARD_GAME_FORMAT_SELF("scoreboard.game.format-self", "player", "kills"),
+
+    PLAYER_NAME_FORMAT("player-name-format", "player");
 
     private static final YamlConfig config = new YamlConfig("messages");
     protected final String path;
@@ -140,11 +132,14 @@ public enum Messages {
     }
 
     public void send(CommandSender player) {
-        player.sendMessage(get());
+        player.sendMessage(PREFIX.get() + get());
     }
 
     public void send(CommandSender player, String... objects) {
-        player.sendMessage(get(objects));
+        player.sendMessage(PREFIX.get() + get(objects));
     }
 
+    public static String getPlayerNameFormat(OfflinePlayer player) {
+        return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, PLAYER_NAME_FORMAT.get())).replace("%player%", player.getName());
+    }
 }

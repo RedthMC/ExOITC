@@ -1,5 +1,7 @@
 prefix: "[&e&lOITC&f]"
 
+player-name-format: "%player%"
+
 command:
   nan: "&c%text% is not a number."
   error: "&cAn error occured while processing the command. Check the console for more info."

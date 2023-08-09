@@ -43,7 +43,7 @@ public class GameProcess implements Runnable {
 
         checkCancelGame();
 
-        game.broadcast(Messages.GAME_LEAVE, player.as().getName(), String.valueOf(players.size()), "");
+        game.broadcast(Messages.GAME_LEAVE, player.getFormattedName(), String.valueOf(players.size()), "");
     }
 
     public void checkCancelGame() {
@@ -79,7 +79,7 @@ public class GameProcess implements Runnable {
         sidebar.custom("", 98);
         for (GamePlayer player : players) {
             Messages format = player.is(audience) ? Messages.SCOREBOARD_GAME_FORMAT_SELF : Messages.SCOREBOARD_GAME_FORMAT;
-            sidebar.custom(format.get(player.as().getName(), String.valueOf(getScore(player))), getScore(player));
+            sidebar.custom(format.get(player.getFormattedName(), String.valueOf(getScore(player))), getScore(player));
         }
         sidebar.custom(" ", -1);
         sidebar.custom(Messages.SCOREBOARD_FOOTER.get(), -2);
@@ -92,13 +92,13 @@ public class GameProcess implements Runnable {
 
     public void finish(GamePlayer winner) {
         if (winner != null) {
-            game.sendTitle(Messages.GAME_WIN.get(winner.as().getName()), "");
+            game.sendTitle(Messages.GAME_WIN.get(winner.getFormattedName()), "");
             game.playSound(Sound.LEVEL_UP, 1f);
             game.broadcast("");
-            game.broadcast(Messages.GAME_RESULT_WINNER, winner.as().getName());
+            game.broadcast(Messages.GAME_RESULT_WINNER, winner.getFormattedName());
             game.broadcast("");
             if (bestKillstreaker != null) {
-                game.broadcast(Messages.GAME_RESULT_KILLSTREAK, bestKillstreaker.as().getName(), String.valueOf(bestKillstreak));
+                game.broadcast(Messages.GAME_RESULT_KILLSTREAK, bestKillstreaker.getFormattedName(), String.valueOf(bestKillstreak));
                 game.broadcast("");
             }
             winner.win();
@@ -137,8 +137,8 @@ public class GameProcess implements Runnable {
     }
 
     public void onKill(GamePlayer killed, GamePlayer killer) {
-        game.broadcast(Messages.GAME_KILL, killed.as().getName(), killer.as().getName(), String.valueOf(killed.getKills()), String.valueOf(killer.getKills()));
-        if (killer.getKillStreak() >= 3) game.broadcast(Messages.GAME_KILLSTREAK, killer.as().getName(), String.valueOf(killer.getKillStreak()));
+        game.broadcast(Messages.GAME_KILL, killed.getFormattedName(), killer.getFormattedName(), String.valueOf(killed.getKills()), String.valueOf(killer.getKills()));
+        if (killer.getKillStreak() >= 3) game.broadcast(Messages.GAME_KILLSTREAK, killer.getFormattedName(), String.valueOf(killer.getKillStreak()));
 
         if (bestKillstreaker == null) bestKillstreaker = killer;
         else if (bestKillstreak < killer.getKillStreak()) {
