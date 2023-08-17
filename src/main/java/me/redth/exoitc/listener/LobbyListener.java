@@ -21,12 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.InventoryView;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 public class LobbyListener implements Listener {
-    public static final Map<UUID, Long> BOOSTED = new HashMap<>();
 
     @EventHandler
     public static void onWeather(WeatherChangeEvent e) {
@@ -43,16 +38,6 @@ public class LobbyListener implements Listener {
                 e.setUseInteractedBlock(Event.Result.DENY);
                 e.setUseItemInHand(Event.Result.DENY);
                 return;
-            }
-        }
-        if (e.getAction() == Action.PHYSICAL) {
-            switch (e.getClickedBlock().getType()) {
-                case GOLD_PLATE:
-                    e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(2));
-                    break;
-                case IRON_PLATE:
-                    e.getPlayer().setVelocity(e.getPlayer().getEyeLocation().getDirection().setY(1.1));
-                    break;
             }
         }
     }
@@ -87,7 +72,7 @@ public class LobbyListener implements Listener {
         player.setSaturation(20);
         player.setExp(0);
         player.setLevel(0);
-        player.spigot().setCollidesWithEntities(false);
+        player.spigot().setCollidesWithEntities(true);
         player.teleport(Config.getLobby());
         Sidebar.lobby(player);
         GameKit.lobby(player);

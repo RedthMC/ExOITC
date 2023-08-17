@@ -135,7 +135,10 @@ public class GamePlayer implements DamageCallback {
                 EntityDamageByEntityEvent arrowEvent = (EntityDamageByEntityEvent) e;
                 if (!(arrowEvent.getDamager() instanceof Arrow)) break;
                 ProjectileSource shooter = ((Arrow) arrowEvent.getDamager()).getShooter();
-                if (!as().equals(shooter)) break;
+                if (as().equals(shooter)) {
+                    e.setCancelled(true);
+                }
+                break;
             default:
                 e.setCancelled(true);
         }
