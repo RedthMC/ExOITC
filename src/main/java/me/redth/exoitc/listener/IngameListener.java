@@ -26,9 +26,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class IngameListener implements Listener, DamageCallback {
-    public static boolean inGame(Player player) {
-        return GamePlayer.of(player) != null;
-    }
 
     public static boolean shouldRestrict(Player player) {
         return player.getGameMode() != GameMode.CREATIVE || Audience.isWatching(player);

@@ -1,5 +1,6 @@
 package me.redth.exoitc.listener;
 
+import me.redth.exoitc.ExOITC;
 import me.redth.exoitc.config.Config;
 import me.redth.exoitc.game.GameKit;
 import me.redth.exoitc.util.item.HeldItem;
@@ -8,6 +9,7 @@ import me.redth.exoitc.util.menu.ClosableMenu;
 import me.redth.exoitc.util.menu.DraggableMenu;
 import me.redth.exoitc.util.visual.Sidebar;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -20,6 +22,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 public class LobbyListener implements Listener {
 
@@ -40,6 +45,29 @@ public class LobbyListener implements Listener {
                 return;
             }
         }
+        if (e.getAction() == Action.PHYSICAL) {
+            switch (e.getClickedBlock().getType()) {
+                case GOLD_PLATE:
+                    jump(e.getPlayer(), 16, false);
+                    break;
+                case IRON_PLATE:
+                    jump(e.getPlayer(), 8, true);
+                    break;
+            }
+        }
+    }
+
+    public static void jump(Player player, int level, boolean boost) {
+        boolean hadJump = player.hasPotionEffect(PotionEffectType.JUMP);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 15, level, false, false), true);
+        if (hadJump) return;
+        Runnable runnable = () -> {
+            double motionY = 0.42 + (level + 1) * 0.1;
+            Vector baseVelo = boost ? player.getLocation().getDirection() : player.getVelocity();
+            player.setVelocity(baseVelo.setY(motionY));
+            player.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.0F, 1.0F);
+        };
+        ExOITC.scheduleDelayed(runnable, 1L);
     }
 
     @EventHandler

@@ -1,6 +1,5 @@
 package me.redth.exoitc;
 
-import me.redth.exoitc.command.Duel;
 import me.redth.exoitc.command.MainCommand;
 import me.redth.exoitc.config.Config;
 import me.redth.exoitc.listener.IngameListener;
@@ -12,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 public class ExOITC extends JavaPlugin {
     private static ExOITC instance;
@@ -26,26 +26,10 @@ public class ExOITC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new LobbyListener(), this);
         getServer().getPluginManager().registerEvents(new IngameListener(), this);
         new MainCommand(this);
-        new Duel();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Expansion().register();
         }
-
-        scheduleRepeating(() -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                Block block = player.getLocation().getBlock();
-                if (block == null) return;
-                switch (block.getType()) {
-                    case GOLD_PLATE:
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1, 16, false, false));
-                        break;
-                    case IRON_PLATE:
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1, 8, false, false));
-                        break;
-                }
-            }
-        }, 1);
     }
 
     public void onDisable() {
