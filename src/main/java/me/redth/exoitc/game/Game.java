@@ -9,6 +9,9 @@ import me.redth.exoitc.game.mode.GameGoal;
 import me.redth.exoitc.game.mode.GameProcess;
 import me.redth.exoitc.util.sign.Leaderboard;
 import me.redth.exoitc.util.visual.Sidebar;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -82,6 +85,13 @@ public class Game implements Runnable {
         if (audiences.size() < 2) return;
 
         countdown = 10;
+        TextComponent component = new TextComponent(Messages.PREFIX.get() + "§a" + name + "§e將在10秒後開始 §7>> §a點此加入 §7<<");
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/oitc join " + id));
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (Audience.isWatching(player)) continue;
+            player.sendMessage(component);
+        }
 
         queueTaskId = ExOITC.scheduleRepeating(this, 20L);
     }
