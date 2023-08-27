@@ -1,14 +1,12 @@
 package me.redth.exoitc.listener;
 
 import me.redth.exoitc.ExOITC;
-import me.redth.exoitc.config.Config;
-import me.redth.exoitc.game.GameKit;
+import me.redth.exoitc.player.OITCPlayer;
+import me.redth.exoitc.player.state.LobbyState;
 import me.redth.exoitc.util.item.HeldItem;
 import me.redth.exoitc.util.menu.ClickableMenu;
 import me.redth.exoitc.util.menu.ClosableMenu;
 import me.redth.exoitc.util.menu.DraggableMenu;
-import me.redth.exoitc.util.visual.Sidebar;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -39,7 +37,7 @@ public class LobbyListener implements Listener {
             if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
             for (HeldItem item : HeldItem.ITEM) {
                 if (!item.is(e.getItem())) continue;
-                item.rightClick(e.getPlayer());
+                item.rightClick(OITCPlayer.get(e.getPlayer()));
                 e.setUseInteractedBlock(Event.Result.DENY);
                 e.setUseItemInHand(Event.Result.DENY);
                 return;
@@ -94,16 +92,8 @@ public class LobbyListener implements Listener {
     @EventHandler
     public void playerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-        player.setHealth(20);
-        player.setFoodLevel(20);
-        player.setSaturation(20);
-        player.setExp(0);
-        player.setLevel(0);
-        player.spigot().setCollidesWithEntities(true);
-        player.teleport(Config.getLobby());
-        Sidebar.lobby(player);
-        GameKit.lobby(player);
+
+        LobbyState.apply(OITCPlayer.get(player));
     }
 
 }

@@ -1,18 +1,26 @@
 package me.redth.exoitc.game;
 
 import me.redth.exoitc.ExOITC;
+import me.redth.exoitc.config.Config;
 import me.redth.exoitc.config.Messages;
 import me.redth.exoitc.game.audience.Audience;
 import me.redth.exoitc.game.audience.GamePlayer;
-import me.redth.exoitc.game.editor.EditorMenu;
 import me.redth.exoitc.game.mode.GameGoal;
 import me.redth.exoitc.game.mode.GameProcess;
+import me.redth.exoitc.player.OITCPlayer;
+import me.redth.exoitc.player.state.LobbyState;
+import me.redth.exoitc.player.state.State;
 import me.redth.exoitc.util.sign.Leaderboard;
 import me.redth.exoitc.util.visual.Sidebar;
+import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class Game implements Runnable {
+public class Game implements Runnable, State {
     public static final Map<String, Game> GAMES = new HashMap<>();
 
     public final String id;
@@ -29,12 +37,11 @@ public class Game implements Runnable {
     public short iconDamage = 0;
     public int minPlayers = 2;
     public int maxPlayers = 8;
-    public boolean isDuel = false;
     public Location lobby;
     public List<Location> spawns = new ArrayList<>();
     public GameGoal goal = GameGoal.KILLS;
 
-    public final List<Audience> audiences = new ArrayList<>();
+    public final List<OITCPlayer> audiences = new ArrayList<>();
     public GamePhase phase = GamePhase.QUEUE;
     private int queueTaskId = -1;
     private int countdown = 10;
@@ -45,36 +52,49 @@ public class Game implements Runnable {
         this.name = id;
     }
 
-    public void join(Player player) {
-        if (Audience.isWatching(player)) {
-            Messages.PLAYER_ALREADY_INGAME.send(player);
+    public void join(OITCPlayer player) {
+        if (!(player.state instanceof LobbyState)) {
+            player.sendMessage(Messages.PLAYER_ALREADY_INGAME);
             return;
         }
-        if (EditorMenu.editors.containsKey(player.getUniqueId())) {
-            Messages.PLAYER_ALREADY_INGAME.send(player);
-            return;
-        }
+
         if (phase != GamePhase.QUEUE) {
-            Audience audience = new Audience(this, player);
-            audiences.add(audience);
-            audience.spectate();
-            broadcast(Messages.GAME_SPECTATING, audience.getFormattedName());
-//            Messages.GAME_IN_PROGRESS.send(player);
+            audiences.add(player);
+            spectate(player);
+            broadcast(Messages.GAME_SPECTATING, player.getFormattedName());
             return;
         }
         if (audiences.size() >= maxPlayers) {
-            Messages.GAME_FULL.send(player);
+            player.sendMessage(Messages.GAME_FULL);
             return;
         }
-        Audience audience = new Audience(this, player);
-        audiences.add(audience);
-        audience.queue();
 
-        informQueue(Messages.GAME_JOIN, audience.getFormattedName(), String.valueOf(audiences.size()), isDuel ? "2" : String.valueOf(maxPlayers));
+        audiences.add(player);
+        queue(player);
+        informQueue(Messages.GAME_JOIN, player.getFormattedName(), String.valueOf(audiences.size()), String.valueOf(maxPlayers));
 
         if (audiences.size() < minPlayers) return;
 
         countdown();
+    }
+
+    public void queue(OITCPlayer player) {
+        player.player.teleport(lobby);
+        player.player.setGameMode(GameMode.ADVENTURE);
+        GameKit.queue(player);
+    }
+
+    public void spectate(OITCPlayer player) {
+        player.player.teleport(lobby);
+
+        PacketPlayOutPlayerInfo oldInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_GAME_MODE, ((CraftPlayer) player.player).getHandle());
+        player.player.setGameMode(GameMode.SPECTATOR);
+        player.sendPacket(new PacketPlayOutGameStateChange(3, 2));
+        player.sendPacket(oldInfo);
+        player.player.setAllowFlight(true);
+        player.player.setFlying(true);
+
+        GameKit.spectate(player);
     }
 
     public void countdown() {
@@ -93,13 +113,25 @@ public class Game implements Runnable {
 
             new GameProcess(this).start();
             phase = GamePhase.IN_PROGRESS;
-            // start
         } else {
             informQueue(Messages.GAME_COUNTDOWN_NOTE, String.valueOf(countdown));
             playSound(Sound.NOTE_STICKS, 1F);
             sendTitle("§e" + countdown, "");
             countdown--;
         }
+    }
+
+    @Override
+    public void onDamaged(OITCPlayer player, EntityDamageEvent e) {
+        if (e.getCause() == EntityDamageEvent.DamageCause.VOID || e.getCause() == EntityDamageEvent.DamageCause.SUICIDE) {
+            player.player.teleport(Config.getLobby());
+        }
+        e.setCancelled(true);
+    }
+
+    @Override
+    public void onRemoved(OITCPlayer player) {
+        audiences.remove(player);
     }
 
     public static void leave(Player player) {
@@ -114,7 +146,7 @@ public class Game implements Runnable {
         if (gamePlayer != null) gamePlayer.getGame().leave(gamePlayer);
     }
 
-    public void leave(Audience player) {
+    public void leave(OITCPlayer player) {
         if (!audiences.remove(player)) return;
 
         if (phase == GamePhase.QUEUE) {
@@ -122,8 +154,8 @@ public class Game implements Runnable {
             informQueue(Messages.GAME_LEAVE, player.getFormattedName(), String.valueOf(audiences.size()), String.valueOf(maxPlayers));
         }
 
-        player.lobby();
-        Messages.PLAYER_LEAVE.send(player.as());
+        LobbyState.apply(player);
+        player.sendMessage(Messages.PLAYER_LEAVE);
 
     }
 

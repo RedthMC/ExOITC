@@ -1,19 +1,14 @@
 package me.redth.exoitc.util.item;
 
-import org.bukkit.entity.Player;
+import me.redth.exoitc.player.OITCPlayer;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class HeldItem {
     public static final List<HeldItem> ITEM = new ArrayList<>();
-    public static final Map<UUID, Long> LAST_CLICKED = new HashMap<>();
     private final ItemStack item;
-    //    private ClickHandler onLeftClick;
     private final ClickHandler onRightClick;
 
     protected HeldItem(ItemStack item, ClickHandler onRightClick) {
@@ -21,31 +16,15 @@ public class HeldItem {
         this.onRightClick = onRightClick;
     }
 
-//    public HeldItem setOnLeftClick(ClickHandler action) {
-//        onLeftClick = action;
-//        return this;
-//    }
-//
-//    public HeldItem setOnRightClick(ClickHandler action) {
-//        onRightClick = action;
-//        return this;
-//    }
-
-//    public void leftClick(Player player) {
-//        if (onLeftClick == null) return;
-//        onLeftClick.click(player);
-//    }
-
-    public void rightClick(Player player) {
+    public void rightClick(OITCPlayer player) {
         if (onRightClick == null) return;
-        LAST_CLICKED.entrySet().removeIf(entry -> entry.getValue() + 500L < System.currentTimeMillis());
-        if (LAST_CLICKED.containsKey(player.getUniqueId())) return;
+        if (player.lastTimeClickedItem + 500L >= System.currentTimeMillis()) return;
         onRightClick.click(player);
-        LAST_CLICKED.put(player.getUniqueId(), System.currentTimeMillis());
+        player.lastTimeClickedItem = System.currentTimeMillis();
     }
 
     public ItemStack getItem() {
-        return item.clone();
+        return item;
     }
 
     public boolean is(ItemStack item) {
@@ -53,7 +32,7 @@ public class HeldItem {
     }
 
     public interface ClickHandler {
-        void click(Player player);
+        void click(OITCPlayer player);
     }
 
 }
