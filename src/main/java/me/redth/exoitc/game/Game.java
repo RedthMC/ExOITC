@@ -96,6 +96,14 @@ public class Game implements Runnable {
         queueTaskId = ExOITC.scheduleRepeating(this, 20L);
     }
 
+    public void quickStart(Player player) {
+        if (audiences.size() < 2) {
+            player.sendMessage(Messages.PREFIX.get() + "§c人數不足!");
+        } else {
+            countdown();
+        }
+    }
+
     @Override
     public void run() {
         if (countdown == 0) {

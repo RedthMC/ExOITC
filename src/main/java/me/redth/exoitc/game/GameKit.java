@@ -21,12 +21,7 @@ public class GameKit {
     public static final ItemStack LEAVE = new ItemBuilder(Material.INK_SACK).setDamage((short) 1).setName(Messages.LEAVE_ITEM.get()).build(Game::leave);
     public static final ItemStack FORCE_START = new ItemBuilder(Material.DIAMOND).setName("§b強制開始").build(player -> {
         if (Audience.isWatching(player)) {
-            Game game = Audience.of(player).getGame();
-            if (game.audiences.size() < 2) {
-                player.sendMessage("§c不能少於2人");
-            } else {
-                Audience.of(player).getGame().countdown();
-            }
+            Audience.of(player).getGame().quickStart(player);
         }
     });
     public static final ItemStack GAMES = new ItemBuilder(Material.BOW).setName(Messages.MENU_GAME_TITLE.get()).build(player -> new GamesMenu(player).display());
